@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>個体値ランク</title>
+<meta name="theme-color" content="#0c1220">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="個体値ランク">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAAJeklEQVR4nO3YrW5VaRSA4d0JhqSqahwNCoElIwlcDkH2MpANl1OCnNSOqCKp4w7GjpiEEER/DuecD9b7PBews9R69/pOTs/ONwB6/lg9AABrCABAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABEPVk9wAJvrj6vHgF+dV/eXaweYYHbm+vVIxzVyenZ+eoZjsTehx0owWCVJyDbH3bz/OOH1SMs8OzFq9UjHMP8C8Dqh71wCswz/AKw/WFfnALzTA6A7Q/7pQHDTA4AAHcYGwC//3AIjoBJZgbA9ofD0YAxZgYAgHsJAEDUwAB4/4FD8wo0w8AAAPAQAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAEDUwAJ/evl49Agz35d3F6hEWuL25Xj3Cng0MAAAPIQAAUTMD4BUIDsf7zxgzA7BpAByG7T/J2AAAcLfJAXAEwH75/R9mcgA2DYD9sf3nOTk9O189wzG8ufq8egT4XVn9Uw2/AL5xCsBubP/BKhfA91wDcC97v6AYAAC2zhMQAD8QAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgKgnqwdY4M3V59Uj8Kv78u5i9QgscHtzvXqEozo5PTtfPcOR2PvsQAmaIiWoPAHZ/uzm+ccPq0dggWcvXq0e4RjmXwBWP3vhFGiafQoMvwBsf/bFKdA0+xSYHADbn/3SgKbBDZgcAADuMDYAfv85BEdA09QjYGYAbH8ORwOaRjZgZgAAuJcAAEQNDID3Hw7NK1DTvFeggQEA4CEEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgamAAPr19vXoEhvvy7mL1CCxwe3O9eoQ9GxgAAB5CAACiZgbAKxCH4/2nad77zzY1AJsGcBi2f9PI7b8NDgAAd5scAEcA++X3v2nq7/82OwCbBrA/tn/T4O2/bdvJ6dn56hmO4c3V59Uj8Luy+ptmr/7/Db8AvnEKsBvbv6mw/bfOBfA91wD3svebInv/m2IAANg6T0AA/EAAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAop6sHmCBr5cvV48A7O6vy6cH+vLtzfWBvvxrOjk9O189w5HY+zCMEvykyhOQ7Q/z/P3+3wN9+dmLVwf68i9l/gVg9cN4ToHdDL8AbH8ocArsZnIAbH/o0IAdTA4AAHcYGwC//1DjCHismQGw/aFJAx5lZgAAuJcAAEQNDID3HyjzCvRwAwMAwEMIAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBA1MAA/Pn+n9UjAMv8dfn0QF++vbk+0JdXGRgAAB5CAACiZgbAKxA0ef95lJkB2DQAemz/xxobAADuNjkAjgDo8Pu/g8kB2DQAGmz/3Zycnp2vnuEYvl6+XD0CsH9W/88YfgF84xSAeWz/n1S5AL7nGoDfmr2/L8UAALB1noAA+IEAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARP0Hgqb+1yoYHOUAAAAASUVORK5CYII=">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%20%22%E5%80%8B%E4%BD%93%E5%80%A4%E3%83%A9%E3%83%B3%E3%82%AF%22%2C%20%22short_name%22%3A%20%22%E5%80%8B%E4%BD%93%E5%80%A4%E3%83%A9%E3%83%B3%E3%82%AF%22%2C%20%22start_url%22%3A%20%22.%22%2C%20%22scope%22%3A%20%22.%22%2C%20%22display%22%3A%20%22standalone%22%2C%20%22background_color%22%3A%20%22%230c1220%22%2C%20%22theme_color%22%3A%20%22%230c1220%22%2C%20%22lang%22%3A%20%22ja%22%2C%20%22icons%22%3A%20%5B%7B%22src%22%3A%20%22data%3Aimage/png%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAAJeklEQVR4nO3YrW5VaRSA4d0JhqSqahwNCoElIwlcDkH2MpANl1OCnNSOqCKp4w7GjpiEEER/DuecD9b7PBews9R69/pOTs/ONwB6/lg9AABrCABAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABEPVk9wAJvrj6vHgF%2BdV/eXaweYYHbm%2BvVIxzVyenZ%2BeoZjsTehx0owWCVJyDbH3bz/OOH1SMs8OzFq9UjHMP8C8Dqh71wCswz/AKw/WFfnALzTA6A7Q/7pQHDTA4AAHcYGwC//3AIjoBJZgbA9ofD0YAxZgYAgHsJAEDUwAB4/4FD8wo0w8AAAPAQAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAEDUwAJ/evl49Agz35d3F6hEWuL25Xj3Cng0MAAAPIQAAUTMD4BUIDsf7zxgzA7BpAByG7T/J2AAAcLfJAXAEwH75/R9mcgA2DYD9sf3nOTk9O189wzG8ufq8egT4XVn9Uw2/AL5xCsBubP/BKhfA91wDcC97v6AYAAC2zhMQAD8QAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgKgnqwdY4M3V59Uj8Kv78u5i9QgscHtzvXqEozo5PTtfPcOR2PvsQAmaIiWoPAHZ/uzm%2BccPq0dggWcvXq0e4RjmXwBWP3vhFGiafQoMvwBsf/bFKdA0%2BxSYHADbn/3SgKbBDZgcAADuMDYAfv85BEdA09QjYGYAbH8ORwOaRjZgZgAAuJcAAEQNDID3Hw7NK1DTvFeggQEA4CEEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgamAAPr19vXoEhvvy7mL1CCxwe3O9eoQ9GxgAAB5CAACiZgbAKxCH4/2nad77zzY1AJsGcBi2f9PI7b8NDgAAd5scAEcA%2B%2BX3v2nq7/82OwCbBrA/tn/T4O2/bdvJ6dn56hmO4c3V59Uj8Luy%2Bptmr/7/Db8AvnEKsBvbv6mw/bfOBfA91wD3svebInv/m2IAANg6T0AA/EAAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAop6sHmCBr5cvV48A7O6vy6cH%2BvLtzfWBvvxrOjk9O189w5HY%2BzCMEvykyhOQ7Q/z/P3%2B3wN9%2BdmLVwf68i9l/gVg9cN4ToHdDL8AbH8ocArsZnIAbH/o0IAdTA4AAHcYGwC//1DjCHismQGw/aFJAx5lZgAAuJcAAEQNDID3HyjzCvRwAwMAwEMIAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBA1MAA/Pn%2Bn9UjAMv8dfn0QF%2B%2Bvbk%2B0JdXGRgAAB5CAACiZgbAKxA0ef95lJkB2DQAemz/xxobAADuNjkAjgDo8Pu/g8kB2DQAGmz/3Zycnp2vnuEYvl6%2BXD0CsH9W/88YfgF84xSAeWz/n1S5AL7nGoDfmr2/L8UAALB1noAA%2BIEAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARP0Hgqb%2B1yoYHOUAAAAASUVORK5CYII%3D%22%2C%20%22sizes%22%3A%20%22512x512%22%2C%20%22type%22%3A%20%22image/png%22%2C%20%22purpose%22%3A%20%22any%22%7D%5D%7D">
+<style>
+:root{
+  --field:#0c1220; --panel:#151e31; --panel2:#1c2740; --line:#2a3852;
+  --ink:#e9effa; --dim:#8496b3; --bar:#4dd0e1;
+  --gl:#54a0e8; --ul:#e8b93a; --ml:#a179e0; --lc:#4fbe8b; 
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--field);color:var(--ink)}
+body{
+  font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",
+    -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:15px; line-height:1.6; max-width:520px; margin:0 auto;
+  padding:max(18px,env(safe-area-inset-top)) 16px calc(56px + env(safe-area-inset-bottom));
+  font-feature-settings:"palt" 1; -webkit-text-size-adjust:100%;
+}
+h1{font-size:17px;font-weight:700;letter-spacing:.04em;margin:0 0 2px}
+.sub{color:var(--dim);font-size:12.5px;margin:0 0 18px}
+
+/* 写真読み取り */
+.shot{
+  display:block;width:100%;padding:15px;margin-bottom:8px;text-align:center;
+  border:1px dashed #3a4d70;border-radius:12px;background:#131c2e;
+  color:var(--bar);font-size:14.5px;font-weight:700;cursor:pointer;
+}
+.shot:active{background:#182338}
+.msg{font-size:12.5px;line-height:1.6;margin:0 0 14px;min-height:1.2em;color:var(--dim)}
+.msg.ok{color:var(--bar)} .msg.ng{color:#f08a7a}
+
+.search{position:relative;margin-bottom:14px}
+input[type=text]{
+  width:100%;padding:13px 14px;border-radius:11px;border:1px solid var(--line);
+  background:var(--panel);color:var(--ink);font-size:16px;font-family:inherit;
+}
+input[type=text]:focus{outline:2px solid var(--bar);outline-offset:1px;border-color:transparent}
+input[type=text]::placeholder{color:#5d6e8a}
+.hits{
+  position:absolute;z-index:9;left:0;right:0;top:calc(100% + 6px);
+  background:var(--panel2);border:1px solid var(--line);border-radius:11px;
+  overflow:hidden;box-shadow:0 14px 32px rgba(0,0,0,.5);
+}
+.hits div{padding:11px 14px;cursor:pointer;display:flex;justify-content:space-between;gap:10px}
+.hits div+div{border-top:1px solid var(--line)}
+.hits div:active{background:#243252}
+.hits small{color:var(--dim);font-variant-numeric:tabular-nums;flex:none}
+
+.now{
+  display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;
+  padding:12px 14px;background:var(--panel);border-radius:11px;margin-bottom:16px;
+  border-left:3px solid var(--bar);
+}
+.now b{font-size:17px;font-weight:700}
+.now span{color:var(--dim);font-size:12px;font-variant-numeric:tabular-nums}
+
+.iv{display:grid;grid-template-columns:66px 1fr 34px;align-items:center;gap:12px;margin:15px 0}
+.iv label{font-size:13px;color:var(--dim)}
+.iv output{font-size:17px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:26px;background:transparent;margin:0}
+input[type=range]::-webkit-slider-runnable-track{
+  height:16px;border-radius:4px;
+  background:
+    repeating-linear-gradient(90deg,transparent 0 calc(6.6667% - 2px),var(--field) calc(6.6667% - 2px) 6.6667%),
+    linear-gradient(90deg,var(--bar) 0 var(--f),#2b3a55 var(--f) 100%);
+}
+input[type=range]::-moz-range-track{
+  height:16px;border-radius:4px;
+  background:
+    repeating-linear-gradient(90deg,transparent 0 calc(6.6667% - 2px),var(--field) calc(6.6667% - 2px) 6.6667%),
+    linear-gradient(90deg,var(--bar) 0 var(--f),#2b3a55 var(--f) 100%);
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:24px;height:24px;margin-top:-4px;border-radius:50%;
+  background:#fff;border:3px solid var(--bar);box-shadow:0 2px 6px rgba(0,0,0,.5);cursor:pointer;
+}
+input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid var(--bar);cursor:pointer}
+input[type=range]:focus-visible{outline:2px solid var(--bar);outline-offset:4px;border-radius:6px}
+
+.tot{
+  display:flex;justify-content:space-between;align-items:center;
+  color:var(--dim);font-size:12.5px;padding:12px 2px 0;margin-top:4px;
+  border-top:1px solid var(--line);font-variant-numeric:tabular-nums;
+}
+.tot b{color:var(--ink);font-weight:700}
+
+/* 検算 */
+.vf{display:flex;align-items:center;gap:8px;margin:14px 0 0;font-size:12.5px;color:var(--dim)}
+.vf input{
+  width:76px;padding:8px 10px;border-radius:8px;border:1px solid var(--line);
+  background:var(--panel);color:var(--ink);font-size:16px;font-family:inherit;
+  font-variant-numeric:tabular-nums;
+}
+.vfmsg{font-size:12.5px;margin:8px 0 0;color:var(--dim);line-height:1.7}
+.vfmsg.ok{color:var(--bar)} .vfmsg.ng{color:#f0b45a}
+.cand{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.cand button{
+  padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);
+  color:var(--ink);font-family:inherit;font-size:13px;font-variant-numeric:tabular-nums;cursor:pointer;
+}
+
+.caps{display:flex;gap:8px;margin:18px 0 22px}
+.caps button{
+  flex:1;padding:9px;border-radius:9px;border:1px solid var(--line);background:var(--panel);
+  color:var(--dim);font-family:inherit;font-size:13px;cursor:pointer;
+}
+.caps button[aria-pressed=true]{background:#24406b;border-color:var(--gl);color:#fff}
+
+.lg{
+  display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px 14px;
+  padding:15px 0 15px 15px;border-top:1px solid var(--line);border-left:3px solid var(--c);
+}
+.lg:last-child{border-bottom:1px solid var(--line)}
+.lg .nm{font-size:14px;font-weight:700}
+.lg .meta{grid-column:1;color:var(--dim);font-size:12px;font-variant-numeric:tabular-nums;margin-top:1px}
+.lg .rk{
+  grid-row:1/3;grid-column:2;text-align:right;
+  font-size:34px;font-weight:800;line-height:1;letter-spacing:-.045em;
+  font-variant-numeric:tabular-nums;color:var(--c);
+}
+.lg .rk i{font-size:13px;font-weight:600;font-style:normal;color:var(--dim);margin-left:3px}
+.lg .na{grid-row:1/3;grid-column:2;text-align:right;color:var(--dim);font-size:13px}
+.best{color:var(--dim);font-size:12px;margin-top:3px;font-variant-numeric:tabular-nums}
+
+.note{color:var(--dim);font-size:11.5px;line-height:1.75;margin-top:26px;border-top:1px solid var(--line);padding-top:14px}
+.empty{color:var(--dim);padding:30px 0;text-align:center;font-size:13.5px}
+</style>
+</head>
+<body>
+
+<h1>個体値ランク</h1>
+<p class="sub">評価画面のスクショから個体値を読み取って、各リーグの順位を出します。</p>
+
+<label class="shot">スクショを選ぶ<input type="file" id="file" accept="image/*" hidden></label>
+<p class="msg" id="msg"></p>
+
+<div class="search">
+  <input type="text" id="q" placeholder="ポケモン名・図鑑番号で検索" autocomplete="off" spellcheck="false">
+  <div class="hits" id="hits" hidden></div>
+</div>
+
+<div class="now" id="now" hidden></div>
+
+<div class="iv"><label for="ra">こうげき</label><input type="range" id="ra" min="0" max="15" value="15"><output id="oa">15</output></div>
+<div class="iv"><label for="rd">ぼうぎょ</label><input type="range" id="rd" min="0" max="15" value="15"><output id="od">15</output></div>
+<div class="iv"><label for="rs">HP</label><input type="range" id="rs" min="0" max="15" value="15"><output id="os">15</output></div>
+<div class="tot"><span>合計</span><span><b id="sum">45</b> / 45 &nbsp;·&nbsp; <b id="pct">100.0</b>%</span></div>
+
+<div class="vf">
+  <span>検算（任意）</span>
+  <input type="number" id="vcp" inputmode="numeric" placeholder="CP">
+  <input type="number" id="vhp" inputmode="numeric" placeholder="HP">
+</div>
+<p class="vfmsg" id="vfmsg"></p>
+<div class="cand" id="cand"></div>
+
+<div class="caps" role="group" aria-label="強化上限">
+  <button id="c50" aria-pressed="true">PL50まで（アメXLあり）</button>
+  <button id="c51" aria-pressed="false">PL51（相棒ブースト）</button>
+</div>
+
+<div id="out"><p class="empty">ポケモンを選んでください</p></div>
+
+<p class="note">
+順位は「攻撃×防御×HP（ステータス積）」の大きい順です。CP上限を超えない最大レベルまで強化した状態で、4096通りの個体値すべてを比較しています。<br>
+上限CPに届かないポケモンは全個体が最大レベルまで上げられるため、どのリーグでも順位＝個体値の高さそのものになります。<br>
+シャドウは種族値が変わらないので順位も同じです。浄化すると個体値が各+2されて順位が変わります。
+</p>
+
+<script>const POKE=[["フシギダネ",1,118,111,128,"Bulbasaur",1],["フシギソウ",2,151,143,155,"Ivysaur",1],["フシギバナ",3,198,189,190,"Venusaur",0],["ヒトカゲ",4,116,93,118,"Charmander",1],["リザード",5,158,126,151,"Charmeleon",1],["リザードン",6,223,173,186,"Charizard",0],["ゼニガメ",7,94,121,127,"Squirtle",1],["カメール",8,126,155,153,"Wartortle",1],["カメックス",9,171,207,188,"Blastoise",0],["キャタピー",10,55,55,128,"Caterpie",1],["トランセル",11,45,80,137,"Metapod",1],["バタフリー",12,167,137,155,"Butterfree",0],["ビードル",13,63,50,120,"Weedle",1],["コクーン",14,46,75,128,"Kakuna",1],["スピアー",15,169,130,163,"Beedrill",0],["ポッポ",16,85,73,120,"Pidgey",1],["ピジョン",17,117,105,160,"Pidgeotto",1],["ピジョット",18,166,154,195,"Pidgeot",0],["コラッタ",19,103,70,102,"Rattata",1],["コラッタ（アローラ）",19,103,70,102,"Rattata (Alolan)",1],["ラッタ",20,161,139,146,"Raticate",0],["ラッタ（アローラ）",20,135,154,181,"Raticate (Alolan)",0],["オニスズメ",21,112,60,120,"Spearow",1],["オニドリル",22,182,133,163,"Fearow",0],["アーボ",23,110,97,111,"Ekans",1],["アーボック",24,167,153,155,"Arbok",0],["ピカチュウ",25,112,96,111,"Pikachu",1],["ピカチュウ（5周年）",25,112,96,111,"Pikachu (5th Anniversary)",0],["ピカチュウ（かりゆし）",25,112,96,111,"Pikachu (Kariyushi)",0],["ピカチュウ（ひこう）",25,112,96,111,"Pikachu (Flying)",0],["ピカチュウ（シェイミスカーフ）",25,112,96,111,"Pikachu (Shaymin Scarf)",1],["ピカチュウ（ホライゾン）",25,112,96,111,"Pikachu (Horizons)",0],["ピカチュウ（ポップスター）",25,112,96,111,"Pikachu (Pop Star)",0],["ピカチュウ（リブレ）",25,112,96,111,"Pikachu (Libre)",0],["ピカチュウ（ロックスター）",25,112,96,111,"Pikachu (Rock Star)",0],["ライチュウ",26,193,151,155,"Raichu",0],["ライチュウ（アローラ）",26,201,154,155,"Raichu (Alolan)",0],["サンド",27,126,120,137,"Sandshrew",1],["サンド（アローラ）",27,125,129,137,"Sandshrew (Alolan)",1],["サンドパン",28,182,175,181,"Sandslash",0],["サンドパン（アローラ）",28,177,195,181,"Sandslash (Alolan)",0],["ニドラン♀",29,86,89,146,"Nidoran Female",1],["ニドリーナ",30,117,120,172,"Nidorina",1],["ニドクイン",31,180,173,207,"Nidoqueen",0],["ニドラン♂",32,105,76,130,"Nidoran Male",1],["ニドリーノ",33,137,111,156,"Nidorino",1],["ニドキング",34,204,156,191,"Nidoking",0],["ピッピ",35,107,108,172,"Clefairy",1],["ピクシー",36,178,162,216,"Clefable",0],["ロコン",37,96,109,116,"Vulpix",1],["ロコン（アローラ）",37,96,109,116,"Vulpix (Alolan)",1],["キュウコン",38,169,190,177,"Ninetales",0],["キュウコン（アローラ）",38,170,193,177,"Ninetales (Alolan)",0],["プリン",39,80,41,251,"Jigglypuff",1],["プクリン",40,156,90,295,"Wigglytuff",0],["ズバット",41,83,73,120,"Zubat",1],["ゴルバット",42,161,150,181,"Golbat",1],["ナゾノクサ",43,131,112,128,"Oddish",1],["クサイハナ",44,153,136,155,"Gloom",1],["ラフレシア",45,202,167,181,"Vileplume",0],["パラス",46,121,99,111,"Paras",1],["パラセクト",47,165,146,155,"Parasect",0],["コンパン",48,100,100,155,"Venonat",1],["モルフォン",49,179,143,172,"Venomoth",0],["ディグダ",50,109,78,67,"Diglett",1],["ディグダ（アローラ）",50,108,81,67,"Diglett (Alolan)",1],["ダグトリオ",51,167,136,111,"Dugtrio",0],["ダグトリオ（アローラ）",51,201,142,111,"Dugtrio (Alolan)",0],["ニャース",52,92,78,120,"Meowth",1],["ニャース（アローラ）",52,99,78,120,"Meowth (Alolan)",1],["ニャース（ガラル）",52,115,92,137,"Meowth (Galarian)",1],["ペルシアン",53,150,136,163,"Persian",0],["ペルシアン（アローラ）",53,158,136,163,"Persian (Alolan)",0],["コダック",54,122,95,137,"Psyduck",1],["ゴルダック",55,191,162,190,"Golduck",0],["マンキー",56,148,82,120,"Mankey",1],["オコリザル",57,207,138,163,"Primeape",1],["ガーディ",58,136,93,146,"Growlithe",1],["ガーディ（ヒスイ）",58,142,92,155,"Growlithe (Hisuian)",1],["ウインディ",59,227,166,207,"Arcanine",0],["ウインディ（ヒスイ）",59,232,165,216,"Arcanine (Hisuian)",0],["ニョロモ",60,101,82,120,"Poliwag",1],["ニョロゾ",61,130,123,163,"Poliwhirl",1],["ニョロボン",62,182,184,207,"Poliwrath",0],["ケーシィ",63,195,82,93,"Abra",1],["ユンゲラー",64,232,117,120,"Kadabra",1],["フーディン",65,271,167,146,"Alakazam",0],["ワンリキー",66,137,82,172,"Machop",1],["ゴーリキー",67,177,125,190,"Machoke",1],["カイリキー",68,234,159,207,"Machamp",0],["マダツボミ",69,139,61,137,"Bellsprout",1],["ウツドン",70,172,92,163,"Weepinbell",1],["ウツボット",71,207,135,190,"Victreebel",0],["メノクラゲ",72,97,149,120,"Tentacool",1],["ドククラゲ",73,166,209,190,"Tentacruel",0],["イシツブテ",74,132,132,120,"Geodude",1],["イシツブテ（アローラ）",74,132,132,120,"Geodude (Alolan)",1],["ゴローン",75,164,164,146,"Graveler",1],["ゴローン（アローラ）",75,164,164,146,"Graveler (Alolan)",1],["ゴローニャ",76,211,198,190,"Golem",0],["ゴローニャ（アローラ）",76,211,198,190,"Golem (Alolan)",0],["ポニータ",77,170,127,137,"Ponyta",1],["ポニータ（ガラル）",77,170,127,137,"Ponyta (Galarian)",1],["ギャロップ",78,207,162,163,"Rapidash",0],["ギャロップ（ガラル）",78,207,162,163,"Rapidash (Galarian)",0],["ヤドン",79,109,98,207,"Slowpoke",1],["ヤドン（ガラル）",79,109,98,207,"Slowpoke (Galarian)",1],["ヤドラン",80,177,180,216,"Slowbro",0],["ヤドラン（ガラル）",80,182,156,216,"Slowbro (Galarian)",0],["コイル",81,165,121,93,"Magnemite",1],["レアコイル",82,223,169,137,"Magneton",1],["カモネギ",83,124,115,141,"Farfetch'd",0],["カモネギ（ガラル）",83,174,114,141,"Farfetch'd (Galarian)",1],["ドードー",84,158,83,111,"Doduo",1],["ドードリオ",85,218,140,155,"Dodrio",0],["パウワウ",86,85,121,163,"Seel",1],["ジュゴン",87,139,177,207,"Dewgong",0],["ベトベター",88,135,90,190,"Grimer",1],["ベトベター（アローラ）",88,135,90,190,"Grimer (Alolan)",1],["ベトベトン",89,190,172,233,"Muk",0],["ベトベトン（アローラ）",89,190,172,233,"Muk (Alolan)",0],["シェルダー",90,116,134,102,"Shellder",1],["パルシェン",91,186,256,137,"Cloyster",0],["ゴース",92,186,67,102,"Gastly",1],["ゴースト",93,223,107,128,"Haunter",1],["ゲンガー",94,261,149,155,"Gengar",0],["イワーク",95,85,232,111,"Onix",1],["スリープ",96,89,136,155,"Drowzee",1],["スリーパー",97,144,193,198,"Hypno",0],["クラブ",98,181,124,102,"Krabby",1],["キングラー",99,240,181,146,"Kingler",0],["ビリリダマ",100,109,111,120,"Voltorb",1],["ビリリダマ（ヒスイ）",100,109,111,120,"Voltorb (Hisuian)",1],["マルマイン",101,173,173,155,"Electrode",0],["マルマイン（ヒスイ）",101,176,176,155,"Electrode (Hisuian)",0],["タマタマ",102,107,125,155,"Exeggcute",1],["ナッシー",103,233,149,216,"Exeggutor",0],["ナッシー（アローラ）",103,230,153,216,"Exeggutor (Alolan)",0],["カラカラ",104,90,144,137,"Cubone",1],["ガラガラ",105,144,186,155,"Marowak",0],["ガラガラ（アローラ）",105,144,186,155,"Marowak (Alolan)",0],["サワムラー",106,224,181,137,"Hitmonlee",0],["エビワラー",107,193,197,137,"Hitmonchan",0],["ベロリンガ",108,108,137,207,"Lickitung",1],["ドガース",109,119,141,120,"Koffing",1],["マタドガス",110,174,197,163,"Weezing",0],["マタドガス（ガラル）",110,174,197,163,"Weezing (Galarian)",0],["サイホーン",111,140,127,190,"Rhyhorn",1],["サイドン",112,222,171,233,"Rhydon",1],["ラッキー",113,60,128,487,"Chansey",1],["モンジャラ",114,183,169,163,"Tangela",1],["ガルーラ",115,181,165,233,"Kangaskhan",0],["タッツー",116,129,103,102,"Horsea",1],["シードラ",117,187,156,146,"Seadra",1],["トサキント",118,123,110,128,"Goldeen",1],["アズマオウ",119,175,147,190,"Seaking",0],["ヒトデマン",120,137,112,102,"Staryu",1],["スターミー",121,210,184,155,"Starmie",0],["バリヤード",122,192,205,120,"Mr. Mime",0],["バリヤード（ガラル）",122,183,169,137,"Mr. Mime (Galarian)",1],["ストライク",123,218,170,172,"Scyther",1],["ルージュラ",124,223,151,163,"Jynx",0],["エレブー",125,198,158,163,"Electabuzz",1],["ブーバー",126,206,154,163,"Magmar",1],["カイロス",127,238,182,163,"Pinsir",0],["ケンタロス",128,198,183,181,"Tauros",0],["ケンタロス（ウォーター）",128,210,193,181,"Tauros (Aqua)",0],["ケンタロス（ファイティング）",128,210,193,181,"Tauros (Combat)",0],["ケンタロス（ファイヤー）",128,210,193,181,"Tauros (Blaze)",0],["コイキング",129,29,85,85,"Magikarp",1],["ギャラドス",130,237,186,216,"Gyarados",0],["ラプラス",131,165,174,277,"Lapras",0],["イーブイ",133,104,114,146,"Eevee",1],["シャワーズ",134,205,161,277,"Vaporeon",0],["サンダース",135,232,182,163,"Jolteon",0],["ブースター",136,246,179,163,"Flareon",0],["ポリゴン",137,153,136,163,"Porygon",1],["オムナイト",138,155,153,111,"Omanyte",1],["オムスター",139,207,201,172,"Omastar",0],["カブト",140,148,140,102,"Kabuto",1],["カブトプス",141,220,186,155,"Kabutops",0],["プテラ",142,221,159,190,"Aerodactyl",0],["カビゴン",143,190,169,330,"Snorlax",0],["フリーザー",144,192,236,207,"Articuno",0],["フリーザー（ガラル）",144,250,197,207,"Articuno (Galarian)",0],["サンダー",145,253,185,207,"Zapdos",0],["サンダー（ガラル）",145,252,189,207,"Zapdos (Galarian)",0],["ファイヤー",146,251,181,207,"Moltres",0],["ファイヤー（ガラル）",146,202,231,207,"Moltres (Galarian)",0],["ミニリュウ",147,119,91,121,"Dratini",1],["ハクリュー",148,163,135,156,"Dragonair",1],["カイリュー",149,263,198,209,"Dragonite",0],["ミュウツー",150,300,182,214,"Mewtwo",0],["ミュウツー（アーマード）",150,182,278,214,"Mewtwo (Armored)",0],["ミュウ",151,210,210,225,"Mew",0],["チコリータ",152,92,122,128,"Chikorita",1],["ベイリーフ",153,122,155,155,"Bayleef",1],["メガニウム",154,168,202,190,"Meganium",0],["ヒノアラシ",155,116,93,118,"Cyndaquil",1],["マグマラシ",156,158,126,151,"Quilava",1],["バクフーン",157,223,173,186,"Typhlosion",0],["バクフーン（ヒスイ）",157,238,172,177,"Typhlosion (Hisuian)",0],["ワニノコ",158,117,109,137,"Totodile",1],["アリゲイツ",159,150,142,163,"Croconaw",1],["オーダイル",160,205,188,198,"Feraligatr",0],["オタチ",161,79,73,111,"Sentret",1],["オオタチ",162,148,125,198,"Furret",0],["ホーホー",163,67,88,155,"Hoothoot",1],["ヨルノズク",164,145,156,225,"Noctowl",0],["レディバ",165,72,118,120,"Ledyba",1],["レディアン",166,107,179,146,"Ledian",0],["イトマル",167,105,73,120,"Spinarak",1],["アリアドス",168,161,124,172,"Ariados",0],["クロバット",169,194,178,198,"Crobat",0],["チョンチー",170,106,97,181,"Chinchou",1],["ランターン",171,146,137,268,"Lanturn",0],["ピチュー",172,77,53,85,"Pichu",1],["ピィ",173,75,79,137,"Cleffa",1],["ププリン",174,69,32,207,"Igglybuff",1],["トゲピー",175,67,116,111,"Togepi",1],["トゲチック",176,139,181,146,"Togetic",1],["ネイティ",177,134,89,120,"Natu",1],["ネイティオ",178,192,146,163,"Xatu",0],["メリープ",179,114,79,146,"Mareep",1],["モココ",180,145,109,172,"Flaaffy",1],["デンリュウ",181,211,169,207,"Ampharos",0],["キレイハナ",182,169,186,181,"Bellossom",0],["マリル",183,37,93,172,"Marill",1],["マリルリ",184,112,152,225,"Azumarill",0],["ウソッキー",185,167,176,172,"Sudowoodo",0],["ニョロトノ",186,174,179,207,"Politoed",0],["ハネッコ",187,67,94,111,"Hoppip",1],["ポポッコ",188,91,120,146,"Skiploom",1],["ワタッコ",189,118,183,181,"Jumpluff",0],["エイパム",190,136,112,146,"Aipom",1],["ヒマナッツ",191,55,55,102,"Sunkern",1],["キマワリ",192,185,135,181,"Sunflora",0],["ヤンヤンマ",193,154,94,163,"Yanma",1],["ウパー",194,75,66,146,"Wooper",1],["ウパー（パルデア）",194,75,66,146,"Wooper (Paldean)",1],["ヌオー",195,152,143,216,"Quagsire",0],["エーフィ",196,261,175,163,"Espeon",0],["ブラッキー",197,126,240,216,"Umbreon",0],["ヤミカラス",198,175,87,155,"Murkrow",1],["ヤドキング",199,177,180,216,"Slowking",0],["ヤドキング（ガラル）",199,190,180,216,"Slowking (Galarian)",0],["ムウマ",200,167,154,155,"Misdreavus",1],["アンノーン",201,136,91,134,"Unown",0],["ソーナンス",202,60,106,382,"Wobbuffet",0],["キリンリキ",203,182,133,172,"Girafarig",1],["クヌギダマ",204,108,122,137,"Pineco",1],["フォレトス",205,161,205,181,"Forretress",0],["ノコッチ",206,131,128,225,"Dunsparce",1],["グライガー",207,143,184,163,"Gligar",1],["ハガネール",208,148,272,181,"Steelix",0],["ブルー",209,137,85,155,"Snubbull",1],["グランブル",210,212,131,207,"Granbull",0],["ハリーセン",211,184,138,163,"Qwilfish",0],["ハリーセン（ヒスイ）",211,184,151,163,"Qwilfish (Hisuian)",1],["ハッサム",212,236,181,172,"Scizor",0],["ツボツボ",213,17,396,85,"Shuckle",0],["ヘラクロス",214,234,179,190,"Heracross",0],["ニューラ",215,189,146,146,"Sneasel",1],["ニューラ（ヒスイ）",215,189,146,146,"Sneasel (Hisuian)",1],["ヒメグマ",216,142,93,155,"Teddiursa",1],["リングマ",217,236,144,207,"Ursaring",1],["マグマッグ",218,118,71,120,"Slugma",1],["マグカルゴ",219,139,191,137,"Magcargo",0],["ウリムー",220,90,69,137,"Swinub",1],["イノムー",221,181,138,225,"Piloswine",1],["サニーゴ",222,118,156,146,"Corsola",0],["サニーゴ（ガラル）",222,116,182,155,"Corsola (Galarian)",0],["テッポウオ",223,127,69,111,"Remoraid",1],["オクタン",224,197,141,181,"Octillery",0],["デリバード",225,128,90,128,"Delibird",0],["マンタイン",226,148,226,163,"Mantine",0],["エアームド",227,148,226,163,"Skarmory",0],["デルビル",228,152,83,128,"Houndour",1],["ヘルガー",229,224,144,181,"Houndoom",0],["キングドラ",230,194,194,181,"Kingdra",0],["ゴマゾウ",231,107,98,207,"Phanpy",1],["ドンファン",232,214,185,207,"Donphan",0],["ポリゴン２",233,198,180,198,"Porygon2",1],["オドシシ",234,192,131,177,"Stantler",1],["ドーブル",235,40,83,146,"Smeargle",0],["バルキー",236,64,64,111,"Tyrogue",1],["カポエラー",237,173,207,137,"Hitmontop",0],["ムチュール",238,153,91,128,"Smoochum",1],["エレキッド",239,135,101,128,"Elekid",1],["ブビィ",240,151,99,128,"Magby",1],["ミルタンク",241,157,193,216,"Miltank",0],["ハピナス",242,129,169,496,"Blissey",0],["ライコウ",243,241,195,207,"Raikou",0],["エンテイ",244,235,171,251,"Entei",0],["スイクン",245,180,235,225,"Suicune",0],["ヨーギラス",246,115,93,137,"Larvitar",1],["サナギラス",247,155,133,172,"Pupitar",1],["バンギラス",248,251,207,225,"Tyranitar",0],["ルギア",249,193,310,235,"Lugia",0],["ホウオウ",250,239,244,214,"Ho-Oh",0],["セレビィ",251,210,210,225,"Celebi",0],["キモリ",252,124,94,120,"Treecko",1],["ジュプトル",253,172,120,137,"Grovyle",1],["ジュカイン",254,223,169,172,"Sceptile",0],["アチャモ",255,130,87,128,"Torchic",1],["ワカシャモ",256,163,115,155,"Combusken",1],["バシャーモ",257,240,141,190,"Blaziken",0],["ミズゴロウ",258,126,93,137,"Mudkip",1],["ヌマクロー",259,156,133,172,"Marshtomp",1],["ラグラージ",260,208,175,225,"Swampert",0],["ポチエナ",261,96,61,111,"Poochyena",1],["グラエナ",262,171,132,172,"Mightyena",0],["ジグザグマ",263,58,80,116,"Zigzagoon",1],["ジグザグマ（ガラル）",263,58,80,116,"Zigzagoon (Galarian)",1],["マッスグマ",264,142,128,186,"Linoone",0],["マッスグマ（ガラル）",264,142,128,186,"Linoone (Galarian)",1],["ケムッソ",265,75,59,128,"Wurmple",1],["カラサリス",266,60,77,137,"Silcoon",1],["アゲハント",267,189,98,155,"Beautifly",0],["マユルド",268,60,77,137,"Cascoon",1],["ドクケイル",269,98,162,155,"Dustox",0],["ハスボー",270,71,77,120,"Lotad",1],["ハスブレロ",271,112,119,155,"Lombre",1],["ルンパッパ",272,173,176,190,"Ludicolo",0],["タネボー",273,71,77,120,"Seedot",1],["コノハナ",274,134,78,172,"Nuzleaf",1],["ダーテング",275,200,121,207,"Shiftry",0],["スバメ",276,106,61,120,"Taillow",1],["オオスバメ",277,185,124,155,"Swellow",0],["キャモメ",278,106,61,120,"Wingull",1],["ペリッパー",279,175,174,155,"Pelipper",0],["ラルトス",280,79,59,99,"Ralts",1],["キルリア",281,117,90,116,"Kirlia",1],["サーナイト",282,237,195,169,"Gardevoir",0],["アメタマ",283,93,87,120,"Surskit",1],["アメモース",284,192,150,172,"Masquerain",0],["キノココ",285,74,110,155,"Shroomish",1],["キノガッサ",286,241,144,155,"Breloom",0],["ナマケロ",287,104,92,155,"Slakoth",1],["ヤルキモノ",288,159,145,190,"Vigoroth",1],["ケッキング",289,290,166,284,"Slaking",0],["ツチニン",290,80,126,104,"Nincada",1],["テッカニン",291,199,112,156,"Ninjask",0],["ゴニョニョ",293,92,42,162,"Whismur",1],["ドゴーム",294,134,81,197,"Loudred",1],["バクオング",295,179,137,232,"Exploud",0],["マクノシタ",296,99,54,176,"Makuhita",1],["ハリテヤマ",297,209,114,302,"Hariyama",0],["ルリリ",298,36,71,137,"Azurill",1],["ノズパス",299,82,215,102,"Nosepass",1],["エネコ",300,84,79,137,"Skitty",1],["エネコロロ",301,132,127,172,"Delcatty",0],["ヤミラミ",302,141,136,137,"Sableye",0],["クチート",303,155,141,137,"Mawile",0],["ココドラ",304,121,141,137,"Aron",1],["コドラ",305,158,198,155,"Lairon",1],["ボスゴドラ",306,198,257,172,"Aggron",0],["アサナン",307,78,107,102,"Meditite",1],["チャーレム",308,121,152,155,"Medicham",0],["ラクライ",309,123,78,120,"Electrike",1],["ライボルト",310,215,127,172,"Manectric",0],["プラスル",311,167,129,155,"Plusle",0],["マイナン",312,147,150,155,"Minun",0],["バルビート",313,143,166,163,"Volbeat",0],["イルミーゼ",314,143,166,163,"Illumise",0],["ロゼリア",315,186,131,137,"Roselia",1],["ゴクリン",316,80,99,172,"Gulpin",1],["マルノーム",317,140,159,225,"Swalot",0],["キバニア",318,171,39,128,"Carvanha",1],["サメハダー",319,243,83,172,"Sharpedo",0],["ホエルコ",320,136,68,277,"Wailmer",1],["ホエルオー",321,175,87,347,"Wailord",0],["ドンメル",322,119,79,155,"Numel",1],["バクーダ",323,194,136,172,"Camerupt",0],["コータス",324,151,203,172,"Torkoal",0],["バネブー",325,125,122,155,"Spoink",1],["ブーピッグ",326,171,188,190,"Grumpig",0],["パッチール",327,116,116,155,"Spinda",0],["ナックラー",328,162,78,128,"Trapinch",1],["ビブラーバ",329,134,99,137,"Vibrava",1],["フライゴン",330,205,168,190,"Flygon",0],["サボネア",331,156,74,137,"Cacnea",1],["ノクタス",332,221,115,172,"Cacturne",0],["チルット",333,76,132,128,"Swablu",1],["チルタリス",334,141,201,181,"Altaria",0],["ザングース",335,222,124,177,"Zangoose",0],["ハブネーク",336,196,118,177,"Seviper",0],["ルナトーン",337,178,153,207,"Lunatone",0],["ソルロック",338,178,153,207,"Solrock",0],["ドジョッチ",339,93,82,137,"Barboach",1],["ナマズン",340,151,141,242,"Whiscash",0],["ヘイガニ",341,141,99,125,"Corphish",1],["シザリガー",342,224,142,160,"Crawdaunt",0],["ヤジロン",343,77,124,120,"Baltoy",1],["ネンドール",344,140,229,155,"Claydol",0],["リリーラ",345,105,150,165,"Lileep",1],["ユレイドル",346,152,194,200,"Cradily",0],["アノプス",347,176,100,128,"Anorith",1],["アーマルド",348,222,174,181,"Armaldo",0],["ヒンバス",349,29,85,85,"Feebas",1],["ミロカロス",350,192,219,216,"Milotic",0],["ポワルン",351,139,139,172,"Castform",0],["ポワルン（あめすがた）",351,139,139,172,"Castform (Rainy)",0],["ポワルン（たいようすがた）",351,139,139,172,"Castform (Sunny)",0],["ポワルン（ゆきすがた）",351,139,139,172,"Castform (Snowy)",0],["カクレオン",352,161,189,155,"Kecleon",0],["カゲボウズ",353,138,65,127,"Shuppet",1],["ジュペッタ",354,218,126,162,"Banette",0],["ヨマワル",355,70,162,85,"Duskull",1],["サマヨール",356,124,234,120,"Dusclops",1],["トロピウス",357,136,163,223,"Tropius",0],["チリーン",358,175,170,181,"Chimecho",0],["アブソル",359,246,120,163,"Absol",0],["ソーナノ",360,41,86,216,"Wynaut",1],["ユキワラシ",361,95,95,137,"Snorunt",1],["オニゴーリ",362,162,162,190,"Glalie",0],["タマザラシ",363,95,90,172,"Spheal",1],["トドグラー",364,137,132,207,"Sealeo",1],["トドゼルガ",365,182,176,242,"Walrein",0],["パールル",366,133,135,111,"Clamperl",1],["ハンテール",367,197,179,146,"Huntail",0],["サクラビス",368,211,179,146,"Gorebyss",0],["ジーランス",369,162,203,225,"Relicanth",0],["ラブカス",370,81,128,125,"Luvdisc",0],["タツベイ",371,134,93,128,"Bagon",1],["コモルー",372,172,155,163,"Shelgon",1],["ボーマンダ",373,277,168,216,"Salamence",0],["ダンバル",374,96,132,120,"Beldum",1],["メタング",375,138,176,155,"Metang",1],["メタグロス",376,257,228,190,"Metagross",0],["レジロック",377,179,309,190,"Regirock",0],["レジアイス",378,179,309,190,"Regice",0],["レジスチル",379,143,285,190,"Registeel",0],["ラティアス",380,228,246,190,"Latias",0],["ラティオス",381,268,212,190,"Latios",0],["カイオーガ",382,270,228,205,"Kyogre",0],["グラードン",383,270,228,205,"Groudon",0],["レックウザ",384,284,170,213,"Rayquaza",0],["ジラーチ",385,210,210,225,"Jirachi",0],["デオキシス",386,345,115,137,"Deoxys",0],["デオキシス（アタック）",386,414,46,137,"Deoxys (Attack)",0],["デオキシス（スピード）",386,230,218,137,"Deoxys (Speed)",0],["デオキシス（ディフェンス）",386,144,330,137,"Deoxys (Defense)",0],["ナエトル",387,119,110,146,"Turtwig",1],["ハヤシガメ",388,157,143,181,"Grotle",1],["ドダイトス",389,202,188,216,"Torterra",0],["ヒコザル",390,113,86,127,"Chimchar",1],["モウカザル",391,158,105,162,"Monferno",1],["ゴウカザル",392,222,151,183,"Infernape",0],["ポッチャマ",393,112,102,142,"Piplup",1],["ポッタイシ",394,150,139,162,"Prinplup",1],["エンペルト",395,210,186,197,"Empoleon",0],["ムックル",396,101,58,120,"Starly",1],["ムクバード",397,142,94,146,"Staravia",1],["ムクホーク",398,234,140,198,"Staraptor",0],["ビッパ",399,80,73,153,"Bidoof",1],["ビーダル",400,162,119,188,"Bibarel",0],["コロボーシ",401,45,74,114,"Kricketot",1],["コロトック",402,160,100,184,"Kricketune",0],["コリンク",403,117,64,128,"Shinx",1],["ルクシオ",404,159,95,155,"Luxio",1],["レントラー",405,232,156,190,"Luxray",0],["スボミー",406,91,109,120,"Budew",1],["ロズレイド",407,243,185,155,"Roserade",0],["ズガイドス",408,218,71,167,"Cranidos",1],["ラムパルド",409,295,109,219,"Rampardos",0],["タテトプス",410,76,195,102,"Shieldon",1],["トリデプス",411,94,286,155,"Bastiodon",0],["ミノムッチ（くさきのミノ）",412,53,83,120,"Burmy (Plant)",1],["ミノムッチ（すなちのミノ）",412,53,83,120,"Burmy (Sandy)",1],["ミノムッチ（ゴミのミノ）",412,53,83,120,"Burmy (Trash)",1],["ミノマダム（くさきのミノ）",413,141,180,155,"Wormadam (Plant)",0],["ミノマダム（すなちのミノ）",413,141,180,155,"Wormadam (Sandy)",0],["ミノマダム（ゴミのミノ）",413,127,175,155,"Wormadam (Trash)",0],["ガーメイル",414,185,98,172,"Mothim",0],["ミツハニー",415,59,83,102,"Combee",1],["ビークイン",416,149,190,172,"Vespiquen",0],["パチリス",417,94,172,155,"Pachirisu",0],["ブイゼル",418,132,67,146,"Buizel",1],["フローゼル",419,221,114,198,"Floatzel",0],["チェリンボ",420,108,92,128,"Cherubi",1],["チェリム（くもりフォルム）",421,170,153,172,"Cherrim (Overcast)",0],["チェリム（はれフォルム）",421,170,153,172,"Cherrim (Sunshine)",0],["カラナクシ",422,103,105,183,"Shellos",1],["トリトドン",423,169,143,244,"Gastrodon",0],["エテボース",424,205,143,181,"Ambipom",0],["フワンテ",425,117,80,207,"Drifloon",1],["フワライド",426,180,102,312,"Drifblim",0],["ミミロル",427,130,105,146,"Buneary",1],["ミミロップ",428,156,194,163,"Lopunny",0],["ムウマージ",429,211,187,155,"Mismagius",0],["ドンカラス",430,243,103,225,"Honchkrow",0],["ニャルマー",431,109,82,135,"Glameow",1],["ブニャット",432,172,133,174,"Purugly",0],["リーシャン",433,114,94,128,"Chingling",1],["スカンプー",434,121,90,160,"Stunky",1],["スカタンク",435,184,132,230,"Skuntank",0],["ドーミラー",436,43,154,149,"Bronzor",1],["ドータクン",437,161,213,167,"Bronzong",0],["ウソハチ",438,124,133,137,"Bonsly",1],["マネネ（ジュニア）",439,125,142,85,"Mime (Jr)",1],["ピンプク",440,25,77,225,"Happiny",1],["ペラップ",441,183,91,183,"Chatot",0],["ミカルゲ",442,169,199,137,"Spiritomb",0],["フカマル",443,124,84,151,"Gible",1],["ガバイト",444,172,125,169,"Gabite",1],["ガブリアス",445,261,193,239,"Garchomp",0],["ゴンベ",446,137,117,286,"Munchlax",1],["リオル",447,127,78,120,"Riolu",1],["ルカリオ",448,236,144,172,"Lucario",0],["ヒポポタス",449,124,118,169,"Hippopotas",1],["カバルドン",450,201,191,239,"Hippowdon",0],["スコルピ",451,93,151,120,"Skorupi",1],["ドラピオン",452,180,202,172,"Drapion",0],["グレッグル",453,116,76,134,"Croagunk",1],["ドクロッグ",454,211,133,195,"Toxicroak",0],["マスキッパ",455,187,136,179,"Carnivine",0],["ケイコウオ",456,96,116,135,"Finneon",1],["ネオラント",457,142,170,170,"Lumineon",0],["タマンタ",458,105,179,128,"Mantyke",1],["ユキカブリ",459,115,105,155,"Snover",1],["ユキノオー",460,178,158,207,"Abomasnow",0],["マニューラ",461,243,171,172,"Weavile",0],["ジバコイル",462,238,205,172,"Magnezone",0],["ベロベルト",463,161,181,242,"Lickilicky",0],["ドサイドン",464,241,190,251,"Rhyperior",0],["モジャンボ",465,207,184,225,"Tangrowth",0],["エレキブル",466,249,163,181,"Electivire",0],["ブーバーン",467,247,172,181,"Magmortar",0],["トゲキッス",468,225,217,198,"Togekiss",0],["メガヤンマ",469,231,156,200,"Yanmega",0],["リーフィア",470,216,219,163,"Leafeon",0],["グレイシア",471,238,205,163,"Glaceon",0],["グライオン",472,185,222,181,"Gliscor",0],["マンムー",473,247,146,242,"Mamoswine",0],["ポリゴンＺ",474,264,150,198,"Porygon-Z",0],["エルレイド",475,237,195,169,"Gallade",0],["ダイノーズ",476,135,275,155,"Probopass",0],["ヨノワール",477,180,254,128,"Dusknoir",0],["ユキメノコ",478,171,150,172,"Froslass",0],["ロトム",479,185,159,137,"Rotom",0],["ロトム（かぜロトム）",479,204,219,137,"Rotom (Fan)",0],["ロトム（れいとうロトム）",479,204,219,137,"Rotom (Frost)",0],["ロトム（ウォッシュロトム）",479,204,219,137,"Rotom (Wash)",0],["ロトム（カットロトム）",479,204,219,137,"Rotom (Mow)",0],["ロトム（ヒートロトム）",479,204,219,137,"Rotom (Heat)",0],["ユクシー",480,156,270,181,"Uxie",0],["エムリット",481,212,212,190,"Mesprit",0],["アグノム",482,270,151,181,"Azelf",0],["ディアルガ",483,275,211,205,"Dialga",0],["ディアルガ（オリジン）",483,270,225,205,"Dialga (Origin)",0],["パルキア",484,280,215,189,"Palkia",0],["パルキア（オリジン）",484,286,223,189,"Palkia (Origin)",0],["ヒードラン",485,251,213,209,"Heatran",0],["レジギガス",486,287,210,221,"Regigigas",0],["ギラティナ（アナザー）",487,187,225,284,"Giratina (Altered)",0],["ギラティナ（オリジン）",487,225,187,284,"Giratina (Origin)",0],["クレセリア",488,152,258,260,"Cresselia",0],["ダークライ",491,285,198,172,"Darkrai",0],["シェイミ（スカイフォルム）",492,261,166,225,"Shaymin (Sky)",0],["シェイミ（ランドフォルム）",492,210,210,225,"Shaymin (Land)",0],["ビクティニ",494,210,210,225,"Victini",0],["ツタージャ",495,88,107,128,"Snivy",1],["ジャノビー",496,122,152,155,"Servine",1],["ジャローダ",497,161,204,181,"Serperior",0],["ポカブ",498,115,85,163,"Tepig",1],["チャオブー",499,173,106,207,"Pignite",1],["エンブオー",500,235,127,242,"Emboar",0],["ミジュマル",501,117,85,146,"Oshawott",1],["フタチマル",502,159,116,181,"Dewott",1],["ダイケンキ",503,212,157,216,"Samurott",0],["ダイケンキ（ヒスイ）",503,218,152,207,"Samurott (Hisuian)",0],["ミネズミ",504,98,73,128,"Patrat",1],["ミルホッグ",505,165,139,155,"Watchog",0],["ヨーテリー",506,107,86,128,"Lillipup",1],["ハーデリア",507,145,126,163,"Herdier",1],["ムーランド",508,206,182,198,"Stoutland",0],["チョロネコ",509,98,73,121,"Purrloin",1],["レパルダス",510,187,106,162,"Liepard",0],["ヤナップ",511,104,94,137,"Pansage",1],["ヤナッキー",512,206,133,181,"Simisage",0],["バオップ",513,104,94,137,"Pansear",1],["バオッキー",514,206,133,181,"Simisear",0],["ヒヤップ",515,104,94,137,"Panpour",1],["ヒヤッキー",516,206,133,181,"Simipour",0],["ムンナ",517,111,92,183,"Munna",1],["ムシャーナ",518,183,166,253,"Musharna",0],["マメパト",519,98,80,137,"Pidove",1],["ハトーボー",520,144,107,158,"Tranquill",1],["ケンホロウ",521,226,146,190,"Unfezant",0],["シママ",522,118,64,128,"Blitzle",1],["ゼブライカ",523,211,136,181,"Zebstrika",0],["ダンゴロ",524,121,110,146,"Roggenrola",1],["ガントル",525,174,143,172,"Boldore",1],["ギガイアス",526,226,201,198,"Gigalith",0],["コロモリ",527,107,85,163,"Woobat",1],["ココロモリ",528,161,119,167,"Swoobat",0],["モグリュー",529,154,85,155,"Drilbur",1],["ドリュウズ",530,255,129,242,"Excadrill",0],["タブンネ",531,114,163,230,"Audino",0],["ドッコラー",532,134,87,181,"Timburr",1],["ドテッコツ",533,180,134,198,"Gurdurr",1],["ローブシン",534,243,158,233,"Conkeldurr",0],["オタマロ",535,98,78,137,"Tympole",1],["ガマガル",536,128,109,181,"Palpitoad",1],["ガマゲロゲ",537,188,150,233,"Seismitoad",0],["ナゲキ",538,172,160,260,"Throh",0],["ダゲキ",539,231,153,181,"Sawk",0],["クルミル",540,96,124,128,"Sewaddle",1],["クルマユ",541,115,162,146,"Swadloon",1],["ハハコモリ",542,205,165,181,"Leavanny",0],["フシデ",543,83,99,102,"Venipede",1],["ホイーガ",544,100,173,120,"Whirlipede",1],["ペンドラー",545,203,175,155,"Scolipede",0],["モンメン",546,71,111,120,"Cottonee",1],["エルフーン",547,164,176,155,"Whimsicott",0],["チュリネ",548,119,91,128,"Petilil",1],["ドレディア",549,214,155,172,"Lilligant",0],["ドレディア（ヒスイ）",549,208,159,172,"Lilligant (Hisuian)",0],["バスラオ",550,189,129,172,"Basculin",1],["メグロコ",551,132,69,137,"Sandile",1],["ワルビル",552,155,90,155,"Krokorok",1],["ワルビアル",553,229,158,216,"Krookodile",0],["ダルマッカ",554,153,86,172,"Darumaka",1],["ダルマッカ（ガラル）",554,153,86,172,"Darumaka (Galarian)",1],["ヒヒダルマ（ガラル）",555,263,114,233,"Darmanitan (Galarian)",0],["ヒヒダルマ（ノーマル）",555,263,114,233,"Darmanitan (Standard)",0],["マラカッチ",556,201,130,181,"Maractus",0],["イシズマイ",557,118,128,137,"Dwebble",1],["イワパレス",558,188,200,172,"Crustle",0],["ズルッグ",559,132,132,137,"Scraggy",1],["ズルズキン",560,163,222,163,"Scrafty",0],["シンボラー",561,204,167,176,"Sigilyph",0],["デスマス",562,95,141,116,"Yamask",1],["デスマス（ガラル）",562,95,141,116,"Yamask (Galarian)",1],["デスカーン",563,163,237,151,"Cofagrigus",0],["プロトーガ",564,134,146,144,"Tirtouga",1],["アバゴーラ",565,192,197,179,"Carracosta",0],["アーケン",566,213,89,146,"Archen",1],["アーケオス",567,292,139,181,"Archeops",0],["ヤブクロン",568,96,122,137,"Trubbish",1],["ダストダス",569,181,164,190,"Garbodor",0],["ゾロア",570,153,78,120,"Zorua",1],["ゾロア（ヒスイ）",570,162,79,111,"Zorua (Hisuian)",1],["ゾロアーク",571,250,127,155,"Zoroark",0],["ゾロアーク（ヒスイ）",571,261,128,146,"Zoroark (Hisuian)",0],["チラーミィ",572,98,80,146,"Minccino",1],["チラチーノ",573,198,130,181,"Cinccino",0],["ゴチム",574,98,112,128,"Gothita",1],["ゴチミル",575,137,153,155,"Gothorita",1],["ゴチルゼル",576,176,205,172,"Gothitelle",0],["ユニラン",577,170,83,128,"Solosis",1],["ダブラン",578,208,103,163,"Duosion",1],["ランクルス",579,214,148,242,"Reuniclus",0],["コアルヒー",580,84,96,158,"Ducklett",1],["スワンナ",581,182,132,181,"Swanna",0],["バニプッチ",582,118,106,113,"Vanillite",1],["バニリッチ",583,151,138,139,"Vanillish",1],["バイバニラ",584,218,184,174,"Vanilluxe",0],["シキジカ",585,115,100,155,"Deerling",1],["メブキジカ",586,198,146,190,"Sawsbuck",0],["エモンガ",587,158,127,146,"Emolga",0],["カブルモ",588,137,87,137,"Karrablast",1],["シュバルゴ",589,223,187,172,"Escavalier",0],["タマゲタケ",590,97,91,170,"Foongus",1],["モロバレル",591,155,139,249,"Amoonguss",0],["プルリル",592,115,134,146,"Frillish",1],["ブルンゲル",593,159,178,225,"Jellicent",0],["ママンボウ",594,138,131,338,"Alomomola",0],["バチュル",595,110,98,137,"Joltik",1],["デンチュラ",596,201,128,172,"Galvantula",0],["テッシード",597,82,155,127,"Ferroseed",1],["ナットレイ",598,158,223,179,"Ferrothorn",0],["ギアル",599,98,121,120,"Klink",1],["ギギアル",600,150,174,155,"Klang",1],["ギギギアル",601,199,214,155,"Klinklang",0],["シビシラス",602,105,78,111,"Tynamo",1],["シビビール",603,156,130,163,"Eelektrik",1],["シビルドン",604,217,152,198,"Eelektross",0],["リグレー",605,148,100,146,"Elgyem",1],["オーベム",606,221,163,181,"Beheeyem",0],["ヒトモシ",607,108,98,137,"Litwick",1],["ランプラー",608,169,115,155,"Lampent",1],["シャンデラ",609,271,182,155,"Chandelure",0],["キバゴ",610,154,101,130,"Axew",1],["オノンド",611,212,123,165,"Fraxure",1],["オノノクス",612,284,172,183,"Haxorus",0],["クマシュン",613,128,74,146,"Cubchoo",1],["ツンベアー",614,233,152,216,"Beartic",0],["フリージオ",615,190,218,190,"Cryogonal",0],["チョボマキ",616,72,140,137,"Shelmet",1],["アギルダー",617,220,120,190,"Accelgor",0],["マッギョ",618,144,171,240,"Stunfisk",0],["マッギョ（ガラル）",618,144,171,240,"Stunfisk (Galarian)",0],["コジョフー",619,160,98,128,"Mienfoo",1],["コジョンド",620,258,127,163,"Mienshao",0],["クリムガン",621,213,170,184,"Druddigon",0],["ゴビット",622,127,92,153,"Golett",1],["ゴルーグ",623,222,154,205,"Golurk",0],["コマタナ",624,154,114,128,"Pawniard",1],["キリキザン",625,232,176,163,"Bisharp",1],["バッフロン",626,195,182,216,"Bouffalant",0],["ワシボン",627,150,97,172,"Rufflet",1],["ウォーグル",628,232,152,225,"Braviary",0],["ウォーグル（ヒスイ）",628,213,137,242,"Braviary (Hisuian)",0],["バルチャイ",629,105,139,172,"Vullaby",1],["バルジーナ",630,129,205,242,"Mandibuzz",0],["クイタラン",631,204,129,198,"Heatmor",0],["アイアント",632,217,188,151,"Durant",0],["モノズ",633,116,93,141,"Deino",1],["ジヘッド",634,159,135,176,"Zweilous",1],["サザンドラ",635,256,188,211,"Hydreigon",0],["メラルバ",636,156,107,146,"Larvesta",1],["ウルガモス",637,264,189,198,"Volcarona",0],["コバルオン",638,192,229,209,"Cobalion",0],["テラキオン",639,260,192,209,"Terrakion",0],["ビリジオン",640,192,229,209,"Virizion",0],["トルネロス（化身）",641,266,164,188,"Tornadus (Incarnate)",0],["トルネロス（霊獣）",641,238,189,188,"Tornadus (Therian)",0],["ボルトロス（化身）",642,266,164,188,"Thundurus (Incarnate)",0],["ボルトロス（霊獣）",642,295,161,188,"Thundurus (Therian)",0],["レシラム",643,275,211,205,"Reshiram",0],["ゼクロム",644,275,211,205,"Zekrom",0],["ランドロス（化身）",645,261,182,205,"Landorus (Incarnate)",0],["ランドロス（霊獣）",645,289,179,205,"Landorus (Therian)",0],["キュレム",646,246,170,245,"Kyurem",0],["キュレム（ブラックキュレム）",646,310,183,245,"Kyurem (Black)",0],["キュレム（ホワイトキュレム）",646,310,183,245,"Kyurem (White)",0],["ケルディオ（いつものすがた）",647,260,192,209,"Keldeo (Ordinary)",0],["ケルディオ（かくごのすがた）",647,260,192,209,"Keldeo (Resolute)",0],["メロエッタ（ボイスフォルム）",648,250,225,225,"Meloetta (Aria)",0],["ゲノセクト",649,252,199,174,"Genesect",0],["ゲノセクト（アクアドライブ）",649,252,199,174,"Genesect (Douse)",0],["ゲノセクト（シュールドライブ）",649,252,199,174,"Genesect (Chill)",0],["ゲノセクト（バーンドライブ）",649,252,199,174,"Genesect (Burn)",0],["ゲノセクト（ブレイズドライブ）",649,252,199,174,"Genesect (Shock)",0],["ハリマロン",650,110,106,148,"Chespin",1],["ハリボーグ",651,146,156,156,"Quilladin",1],["ブリガロン",652,201,204,204,"Chesnaught",0],["フォッコ",653,116,102,120,"Fennekin",1],["テールナー",654,171,130,153,"Braixen",1],["マフォクシー",655,230,189,181,"Delphox",0],["ケロマツ",656,122,84,121,"Froakie",1],["ゲコガシラ",657,168,114,144,"Frogadier",1],["ゲッコウガ",658,223,152,176,"Greninja",0],["ホルビー",659,68,72,116,"Bunnelby",1],["ホルード",660,112,155,198,"Diggersby",0],["ヤヤコマ",661,95,80,128,"Fletchling",1],["ヒノヤコマ",662,145,110,158,"Fletchinder",1],["ファイアロー",663,176,155,186,"Talonflame",0],["コフキムシ",664,63,63,116,"Scatterbug",1],["ビビヨン",666,176,103,190,"Vivillon",0],["シシコ",667,139,112,158,"Litleo",1],["カエンジシ",668,221,149,200,"Pyroar",0],["フラベベ",669,108,120,127,"Flabebe",1],["フラエッテ",670,136,151,144,"Floette",1],["フラージェス",671,212,244,186,"Florges",0],["メェークル",672,123,102,165,"Skiddo",1],["ゴーゴート",673,196,146,265,"Gogoat",0],["ヤンチャム",674,145,107,167,"Pancham",1],["ゴロンダ",675,226,146,216,"Pangoro",0],["トリミアン",676,164,167,181,"Furfrou",0],["ニャスパー",677,120,114,158,"Espurr",1],["ニャオニクス（オス）",678,166,167,179,"Meowstic (Male)",0],["ニャオニクス（メス）",678,166,167,179,"Meowstic (Female)",0],["ヒトツキ",679,135,139,128,"Honedge",1],["ニダンギル",680,188,206,153,"Doublade",1],["ギルガルド（Shield）",681,97,272,155,"Aegislash (Shield)",0],["シュシュプ",682,110,113,186,"Spritzee",1],["フレフワン",683,173,150,226,"Aromatisse",0],["ペロッパフ",684,109,119,158,"Swirlix",1],["ペロリーム",685,168,163,193,"Slurpuff",0],["マーイーカ",686,98,95,142,"Inkay",1],["カラマネロ",687,177,165,200,"Malamar",0],["カメテテ",688,96,120,123,"Binacle",1],["ガメノデス",689,194,205,176,"Barbaracle",0],["クズモー",690,109,109,137,"Skrelp",1],["ドラミドロ",691,177,207,163,"Dragalge",0],["ウデッポウ",692,108,117,137,"Clauncher",1],["ブロスター",693,221,171,174,"Clawitzer",0],["エリキテル",694,115,78,127,"Helioptile",1],["エレザード",695,219,168,158,"Heliolisk",0],["チゴラス",696,158,123,151,"Tyrunt",1],["ガチゴラス",697,227,191,193,"Tyrantrum",0],["アマルス",698,124,109,184,"Amaura",1],["アマルルガ",699,186,163,265,"Aurorus",0],["ニンフィア",700,203,205,216,"Sylveon",0],["ルチャブル",701,195,153,186,"Hawlucha",0],["デデンネ",702,164,134,167,"Dedenne",0],["メレシー",703,95,285,137,"Carbink",0],["ヌメラ",704,101,112,128,"Goomy",1],["ヌメイル",705,159,176,169,"Sliggoo",1],["ヌメルゴン",706,220,242,207,"Goodra",0],["クレッフィ",707,160,179,149,"Klefki",0],["ボクレー",708,125,103,125,"Phantump",1],["オーロット",709,201,154,198,"Trevenant",0],["バケッチャ（おおきいサイズ）",710,120,122,144,"Pumpkaboo (Large)",1],["バケッチャ（ちいさいサイズ）",710,122,124,127,"Pumpkaboo (Small)",1],["バケッチャ（とてもおおきいサイズ）",710,118,120,153,"Pumpkaboo (Super)",1],["バケッチャ（ふつうのサイズ）",710,121,123,135,"Pumpkaboo (Average)",1],["パンプジン（おおきいサイズ）",711,179,206,181,"Gourgeist (Large)",0],["パンプジン（ちいさいサイズ）",711,171,219,146,"Gourgeist (Small)",0],["パンプジン（とてもおおきいサイズ）",711,182,200,198,"Gourgeist (Super)",0],["パンプジン（ふつうのサイズ）",711,175,213,163,"Gourgeist (Average)",0],["カチコール",712,117,120,146,"Bergmite",1],["クレベース",713,196,240,216,"Avalugg",0],["クレベース（ヒスイ）",713,214,238,216,"Avalugg (Hisuian)",0],["オンバット",714,83,73,120,"Noibat",1],["オンバーン",715,205,175,198,"Noivern",0],["ゼルネアス",716,250,185,246,"Xerneas",0],["イベルタル",717,250,185,246,"Yveltal",0],["ジガルデ（10% Forme）",718,205,173,144,"Zygarde (10% Forme)",0],["ジガルデ（50% Forme）",718,203,232,239,"Zygarde (50% Forme)",0],["ジガルデ（Complete Forme）",718,184,207,389,"Zygarde (Complete Forme)",0],["ディアンシー",719,190,285,137,"Diancie",0],["フーパ",720,261,187,173,"Hoopa",0],["フーパ（Unbound）",720,311,191,173,"Hoopa (Unbound)",0],["ボルケニオン",721,252,216,190,"Volcanion",0],["モクロー",722,102,99,169,"Rowlet",1],["フクスロー",723,142,139,186,"Dartrix",1],["ジュナイパー",724,210,179,186,"Decidueye",0],["ジュナイパー（ヒスイ）",724,213,174,204,"Decidueye (Hisuian)",0],["ニャビー",725,128,79,128,"Litten",1],["ニャヒート",726,174,103,163,"Torracat",1],["ガオガエン",727,214,175,216,"Incineroar",0],["アシマリ",728,120,103,137,"Popplio",1],["オシャマリ",729,168,145,155,"Brionne",1],["アシレーヌ",730,232,195,190,"Primarina",0],["ツツケラ",731,136,59,111,"Pikipek",1],["ケララッパ",732,159,100,146,"Trumbeak",1],["ドデカバシ",733,222,146,190,"Toucannon",0],["ヤングース",734,122,56,134,"Yungoos",1],["デカグース",735,194,113,204,"Gumshoos",0],["アゴジムシ",736,115,85,132,"Grubbin",1],["デンヂムシ",737,145,161,149,"Charjabug",1],["クワガノン",738,254,158,184,"Vikavolt",0],["マケンカニ",739,150,104,132,"Crabrawler",1],["ケケンカニ",740,231,138,219,"Crabominable",0],["オドリドリ（Baile）",741,196,145,181,"Oricorio (Baile)",0],["オドリドリ（Pa'u）",741,196,145,181,"Oricorio (Pa'u)",0],["オドリドリ（Pom-Pom）",741,196,145,181,"Oricorio (Pom-Pom)",0],["オドリドリ（Sensu）",741,196,145,181,"Oricorio (Sensu)",0],["アブリー",742,110,81,120,"Cutiefly",1],["アブリボン",743,198,146,155,"Ribombee",0],["イワンコ",744,117,78,128,"Rockruff",1],["ルガルガン（Dusk）",745,234,139,181,"Lycanroc (Dusk)",0],["ルガルガン（Midday）",745,231,140,181,"Lycanroc (Midday)",0],["ルガルガン（Midnight）",745,218,152,198,"Lycanroc (Midnight)",0],["ヒドイデ",747,98,110,137,"Mareanie",1],["ドヒドイデ",748,114,273,137,"Toxapex",0],["ドロバンコ",749,175,121,172,"Mudbray",1],["バンバドロ",750,214,174,225,"Mudsdale",0],["シズクモ",751,72,117,116,"Dewpider",1],["オニシズクモ",752,126,219,169,"Araquanid",0],["カリキリ",753,100,64,120,"Fomantis",1],["ラランテス",754,192,169,172,"Lurantis",0],["ネマシュ",755,108,119,120,"Morelull",1],["マシェード",756,154,168,155,"Shiinotic",0],["ヤトウモリ",757,136,80,134,"Salandit",1],["エンニュート",758,228,130,169,"Salazzle",0],["ヌイコグマ",759,136,95,172,"Stufful",1],["キテルグマ",760,226,141,260,"Bewear",0],["アマカジ",761,55,69,123,"Bounsweet",1],["アママイコ",762,78,94,141,"Steenee",1],["アマージョ",763,222,195,176,"Tsareena",0],["キュワワー",764,165,215,139,"Comfey",0],["ヤレユータン",765,168,192,207,"Oranguru",0],["ナゲツケサル",766,222,160,225,"Passimian",0],["コソクムシ",767,67,74,93,"Wimpod",1],["グソクムシャ",768,218,226,181,"Golisopod",0],["スナバァ",769,120,118,146,"Sandygast",1],["シロデスナ",770,178,178,198,"Palossand",0],["ネッコアラ",775,216,165,163,"Komala",0],["バクガメス",776,165,215,155,"Turtonator",0],["トゲデマル",777,190,145,163,"Togedemaru",0],["ミミッキュ",778,177,199,146,"Mimikyu",0],["ハギギシリ",779,208,145,169,"Bruxish",0],["ジジーロン",780,231,164,186,"Drampa",0],["ダダリン",781,233,179,172,"Dhelmise",0],["ジャラコ",782,102,108,128,"Jangmo-o",1],["ジャランゴ",783,145,162,146,"Hakamo-o",1],["ジャラランガ",784,222,240,181,"Kommo-o",0],["カプ・コケコ",785,250,181,172,"Tapu Koko",0],["カプ・テテフ",786,259,208,172,"Tapu Lele",0],["カプ・ブルル",787,249,215,172,"Tapu Bulu",0],["カプ・レヒレ",788,189,254,172,"Tapu Fini",0],["ソルガレオ",791,255,191,264,"Solgaleo",0],["ルナアーラ",792,255,191,264,"Lunala",0],["ウツロイド",793,249,210,240,"Nihilego",0],["マッシブーン",794,236,196,216,"Buzzwole",0],["フェローチェ",795,316,85,174,"Pheromosa",0],["デンジュモク",796,330,144,195,"Xurkitree",0],["テッカグヤ",797,207,199,219,"Celesteela",0],["カミツルギ",798,323,182,139,"Kartana",0],["アクジキング",799,188,99,440,"Guzzlord",0],["ネクロズマ",800,251,195,219,"Necrozma",0],["ネクロズマ（Dawn Wings）",800,277,220,200,"Necrozma (Dawn Wings)",0],["ネクロズマ（Dusk Mane）",800,277,220,200,"Necrozma (Dusk Mane)",0],["マーシャドー",802,265,190,207,"Marshadow",0],["ベベノム",803,145,133,167,"Poipole",1],["アーゴヨン",804,263,159,177,"Naganadel",0],["ツンデツンデ",805,213,298,156,"Stakataka",0],["ズガドーン",806,315,148,142,"Blacephalon",0],["ゼラオラ",807,252,177,204,"Zeraora",0],["メルタン",808,118,99,130,"Meltan",1],["メルメタル",809,226,190,264,"Melmetal",0],["サルノリ",810,122,91,137,"Grookey",1],["バチンキー",811,165,134,172,"Thwackey",1],["ゴリランダー",812,239,168,225,"Rillaboom",0],["ヒバニー",813,132,79,137,"Scorbunny",1],["ラビフット",814,170,125,163,"Raboot",1],["エースバーン",815,238,163,190,"Cinderace",0],["メッソン",816,132,79,137,"Sobble",1],["ジメレオン",817,186,113,163,"Drizzile",1],["インテレオン",818,262,142,172,"Inteleon",0],["ホシガリス",819,95,86,172,"Skwovet",1],["ヨクバリス",820,160,156,260,"Greedent",0],["ココガラ",821,88,67,116,"Rookidee",1],["アオガラス",822,129,110,169,"Corvisquire",1],["アーマーガア",823,163,192,221,"Corviknight",0],["サッチムシ",824,46,67,93,"Blipbug",1],["レドームシ",825,87,157,137,"Dottler",1],["イオルブ",826,156,240,155,"Orbeetle",0],["クスネ",827,85,82,120,"Nickit",1],["フォクスライ",828,172,164,172,"Thievul",0],["ヒメンカ",829,70,104,120,"Gossifleur",1],["ワタシラガ",830,148,211,155,"Eldegoss",0],["ウールー",831,76,97,123,"Wooloo",1],["バイウールー",832,159,198,176,"Dubwool",0],["ワンパチ",835,80,90,153,"Yamper",1],["パルスワン",836,197,131,170,"Boltund",0],["タンドン",837,73,91,102,"Rolycoly",1],["トロッゴン",838,114,157,190,"Carkol",1],["セキタンザン",839,146,198,242,"Coalossal",0],["カジッチュ",840,71,116,120,"Applin",1],["アップリュー",841,214,144,172,"Flapple",0],["タルップル",842,178,146,242,"Appletun",0],["スナヘビ",843,103,123,141,"Silicobra",1],["サダイジャ",844,202,207,176,"Sandaconda",0],["ウッウ",845,173,163,172,"Cramorant",0],["サシカマス",846,118,72,121,"Arrokuda",1],["カマスジョー",847,258,127,156,"Barraskewda",0],["エレズン",848,97,65,120,"Toxel",1],["ストリンダー",849,224,140,181,"Toxtricity",0],["ヤクデ",850,118,90,137,"Sizzlipede",1],["マルヤクデ",851,220,158,225,"Centiskorch",0],["タタッコ",852,121,103,137,"Clobbopus",1],["オトスパス",853,209,162,190,"Grapploct",0],["ヤバチャ",854,134,96,120,"Sinistea",1],["ポットデス",855,248,189,155,"Polteageist",0],["ミブリム",856,98,93,123,"Hatenna",1],["テブリム",857,153,133,149,"Hattrem",1],["ブリムオン",858,237,182,149,"Hatterene",0],["ベロバー",859,103,69,128,"Impidimp",1],["ギモー",860,145,102,163,"Morgrem",1],["オーロンゲ",861,227,139,216,"Grimmsnarl",0],["タチフサグマ",862,180,194,212,"Obstagoon",0],["ニャイキング",863,195,162,172,"Perrserker",0],["サニゴーン",864,253,182,155,"Cursola",0],["ネギガナイト",865,248,176,158,"Sirfetch'd",0],["バリコオル",866,212,179,190,"Mr. Rime",0],["デスバーン",867,163,237,151,"Runerigus",0],["タイレーツ",870,193,170,163,"Falinks",0],["ユキハミ",872,76,59,102,"Snom",1],["モスノウ",873,230,155,172,"Frosmoth",0],["イシヘンジン",874,222,182,225,"Stonjourner",0],["イエッサン（オス）",876,208,166,155,"Indeedee (Male)",0],["イエッサン（メス）",876,184,184,172,"Indeedee (Female)",0],["モルペコ（Full Belly）",877,192,121,151,"Morpeko (Full Belly)",0],["ジュラルドン",884,239,185,172,"Duraludon",1],["ドラメシヤ",885,117,61,99,"Dreepy",1],["ドロンチ",886,163,105,169,"Drakloak",1],["ドラパルト",887,266,170,204,"Dragapult",0],["ザシアン（Crowned Sword）",888,332,240,192,"Zacian (Crowned Sword)",0],["ザシアン（マイティフォルム）",888,254,236,192,"Zacian (Hero)",0],["ザマゼンタ（Crowned Shield）",889,250,292,192,"Zamazenta (Crowned Shield)",0],["ザマゼンタ（マイティフォルム）",889,254,236,192,"Zamazenta (Hero)",0],["ムゲンダイナ",890,278,192,268,"Eternatus",0],["ダクマ",891,170,112,155,"Kubfu",1],["ウーラオス（Rapid Strike）",892,254,177,225,"Urshifu (Rapid Strike)",0],["ウーラオス（Single Strike）",892,254,177,225,"Urshifu (Single Strike)",0],["ザルード",893,242,215,233,"Zarude",0],["レジエレキ",894,250,125,190,"Regieleki",0],["レジドラゴ",895,202,101,400,"Regidrago",0],["アヤシシ",899,206,145,230,"Wyrdeer",0],["バサギリ",900,253,174,172,"Kleavor",0],["ガチグマ",901,243,181,277,"Ursaluna",0],["オオニューラ",903,259,158,190,"Sneasler",0],["ハリーマン",904,222,171,198,"Overqwil",0],["ラブトロス（化身）",905,281,162,179,"Enamorus (Incarnate)",0],["ラブトロス（霊獣）",905,250,201,179,"Enamorus (Therian)",0],["ニャオハ",906,116,99,120,"Sprigatito",1],["ニャローテ",907,157,128,156,"Floragato",1],["マスカーニャ",908,233,153,183,"Meowscarada",0],["ホゲータ",909,112,96,167,"Fuecoco",1],["アチゲータ",910,162,134,191,"Crocalor",1],["ラウドボーン",911,207,178,232,"Skeledirge",0],["クワッス",912,120,86,146,"Quaxly",1],["ウェルカモ",913,162,123,172,"Quaxwell",1],["ウェーニバル",914,236,159,198,"Quaquaval",0],["グルトン",915,81,79,144,"Lechonk",1],["パフュートン",916,186,153,242,"Oinkologne",0],["パフュートン（メス）",916,169,162,251,"Oinkologne (Female)",0],["タマンチュラ",917,70,77,111,"Tarountula",1],["ワナイダー",918,139,166,155,"Spidops",0],["マメバッタ",919,81,65,107,"Nymble",1],["エクスレッグ",920,199,144,174,"Lokix",0],["パモ",921,95,45,128,"Pawmi",1],["パモット",922,147,82,155,"Pawmo",1],["パーモット",923,232,141,172,"Pawmot",0],["ワッカネズミ",924,98,90,137,"Tandemaus",1],["イッカネズミ",925,159,157,179,"Maushold",0],["パピモッチ",926,102,126,114,"Fidough",1],["バウッツェル",927,159,212,149,"Dachsbun",0],["ミニーブ",928,100,89,121,"Smoliv",1],["オリーニョ",929,137,131,141,"Dolliv",1],["オリーヴァ",930,219,189,186,"Arboliva",0],["イキリンコ",931,185,105,193,"Squawkabilly",0],["コジオ",932,95,108,146,"Nacli",1],["ジオヅム",933,105,160,155,"Naclstack",1],["キョジオーン",934,171,212,225,"Garganacl",0],["カルボウ",935,92,74,120,"Charcadet",1],["グレンアルマ",936,234,185,198,"Armarouge",0],["ソウブレイズ",937,239,189,181,"Ceruledge",0],["ズピカ",938,104,73,156,"Tadbulb",1],["ハラバリー",939,184,165,240,"Bellibolt",0],["カイデン",940,105,75,120,"Wattrel",1],["タイカイデン",941,221,132,172,"Kilowattrel",0],["シルシュルー",944,124,70,120,"Shroodle",1],["タギングル",945,199,149,160,"Grafaiai",0],["ノノクラゲ",948,97,149,120,"Toedscool",1],["リククラゲ",949,166,209,190,"Toedscruel",0],["ガケガニ",950,184,185,172,"Klawf",0],["ヒラヒナ",955,105,60,102,"Flittle",1],["クエスパトラ",956,204,127,216,"Espathra",0],["カヌチャン",957,85,110,137,"Tinkatink",1],["ナカヌチャン",958,109,145,163,"Tinkatuff",1],["デカヌチャン",959,155,196,198,"Tinkaton",0],["ウミディグダ",960,109,52,67,"Wiglett",1],["ウミトリオ",961,205,136,111,"Wugtrio",0],["オトシドリ",962,198,172,172,"Bombirdier",0],["ブロロン",965,123,107,128,"Varoom",1],["ブロロローム",966,229,168,190,"Revavroom",0],["ミミズズ",968,161,219,172,"Orthworm",0],["キラーメ",969,187,104,134,"Glimmet",1],["キラフロル",970,246,177,195,"Glimmora",0],["ボチ",971,105,106,137,"Greavard",1],["ハカドッグ",972,186,195,176,"Houndstone",0],["カラミンゴ",973,227,145,193,"Flamigo",0],["アルクジラ",974,119,80,239,"Cetoddle",1],["ハルクジラ",975,208,123,347,"Cetitan",0],["ヘイラッシャ",977,176,178,312,"Dondozo",0],["シャリタツ（Curly）",978,226,166,169,"Tatsugiri (Curly)",0],["シャリタツ（Droopy）",978,226,166,169,"Tatsugiri (Droopy)",0],["シャリタツ（Stretchy）",978,226,166,169,"Tatsugiri (Stretchy)",0],["コノヨザル",979,220,178,242,"Annihilape",0],["ドオー",980,127,151,277,"Clodsire",0],["ノココッチ",982,188,150,268,"Dudunsparce",0],["ドドゲザン",983,238,203,225,"Kingambit",0],["セビエ",996,134,86,163,"Frigibax",1],["セゴール",997,173,128,207,"Arctibax",1],["セグレイブ",998,254,168,229,"Baxcalibur",0],["コレクレー",999,140,76,128,"Gimmighoul",1],["サーフゴー",1000,252,190,202,"Gholdengo",0]];</script>
+<script>
+const CPM={1:.094,1.5:.1351374,2:.16639787,2.5:.192650919,3:.21573247,3.5:.236572661,4:.25572005,4.5:.273530381,5:.29024988,5.5:.306057377,6:.3210876,6.5:.335439132,7:.34921268,7.5:.362457751,8:.37523559,8.5:.387592416,9:.39956728,9.5:.411193551,10:.42250001,10.5:.43292642,11:.44310755,11.5:.453059958,12:.46279839,12.5:.472336083,13:.48168495,13.5:.4908558,14:.49985844,14.5:.508701765,15:.51739395,15.5:.525942511,16:.53435433,16.5:.542635767,17:.55079269,17.5:.558830576,18:.56675452,18.5:.574569153,19:.58227891,19.5:.589887917,20:.59740001,20.5:.604818814,21:.61215729,21.5:.619399365,22:.62656713,22.5:.633644533,23:.64065295,23.5:.647576426,24:.65443563,24.5:.661214806,25:.667934,25.5:.674577537,26:.68116492,26.5:.687680648,27:.69414365,27.5:.700538673,28:.70688421,28.5:.713164996,29:.71939909,29.5:.725571552,30:.7317,30.5:.734741009,31:.73776948,31.5:.740785574,32:.74378943,32.5:.746781211,33:.74976104,33.5:.752729087,34:.75568551,34.5:.758630378,35:.76156384,35.5:.764486065,36:.76739717,36.5:.770297266,37:.7731865,37.5:.776064962,38:.77893275,38.5:.781790055,39:.78463697,39.5:.787473578,40:.79030001,40.5:.792803968,41:.79530001,41.5:.797803921,42:.80030001,42.5:.802803868,43:.80530001,43.5:.807803814,44:.81030001,44.5:.81280377,45:.81530001,45.5:.81780373,46:.82030001,46.5:.822803688,47:.82530001,47.5:.827803642,48:.83030001,48.5:.832803596,49:.83530001,49.5:.837803549,50:.84029999,50.5:.842803507,51:.84529999};
+const ALL=Object.keys(CPM).map(Number).sort((a,b)=>a-b);
+const LEAGUES=[
+  {n:"リトル",cap:500,c:"var(--lc)"},{n:"スーパー",cap:1500,c:"var(--gl)"},
+  {n:"ハイパー",cap:2500,c:"var(--ul)"},{n:"マスター",cap:0,c:"var(--ml)"}];
+const $=id=>document.getElementById(id);
+
+/* ===== 順位計算 ===== */
+function analyze(base,cap,maxLv){
+  const [BA,BD,BS]=base, lv=ALL.filter(l=>l<=maxLv), rows=[];
+  for(let a=0;a<16;a++)for(let d=0;d<16;d++)for(let s=0;s<16;s++){
+    const at=BA+a, df=BD+d, st=BS+s, rt=Math.sqrt(df)*Math.sqrt(st)*at/10;
+    let L=-1,C=0;
+    for(let i=lv.length-1;i>=0;i--){
+      const m=CPM[lv[i]], c=Math.max(10,Math.floor(rt*m*m));
+      if(!cap||c<=cap){L=lv[i];C=c;break;}
+    }
+    if(L<0) continue;
+    const m=CPM[L];
+    rows.push({a,d,s,L,C,sp:at*m*df*m*Math.floor(st*m)});
+  }
+  rows.sort((x,y)=>y.sp-x.sp);
+  let rank=0,prev=null;
+  rows.forEach((r,i)=>{ if(r.sp!==prev){rank=i+1;prev=r.sp;} r.r=rank; });
+  return rows;
+}
+const CACHE=new Map();
+function table(base,cap,maxLv){
+  const k=base.join('/')+':'+cap+':'+maxLv;
+  if(!CACHE.has(k)) CACHE.set(k,analyze(base,cap,maxLv));
+  return CACHE.get(k);
+}
+
+/* ===== CP・HPから候補を逆算 ===== */
+function candidates(base,cp,hp){
+  const [BA,BD,BS]=base, out=[];
+  for(const L of ALL){
+    const m=CPM[L], k=m*m/10;
+    for(let s=0;s<16;s++){
+      if(Math.floor((BS+s)*m)!==hp) continue;
+      for(let d=0;d<16;d++){
+        const q=Math.sqrt(BD+d)*Math.sqrt(BS+s)*k;
+        for(let a=0;a<16;a++){
+          if(Math.max(10,Math.floor((BA+a)*q))===cp) out.push({L,a,d,s});
+        }
+      }
+    }
+  }
+  return out;
+}
+
+/* ===== スクショから個体値を読む ===== */
+const FILLS=[[244,166,76,26],[224,126,132,22]];  // 通常の塗り / 個体値15の赤
+function classify(d,i){
+  const r=d[i],g=d[i+1],b=d[i+2];
+  for(const f of FILLS) if(Math.abs(r-f[0])<=f[3]&&Math.abs(g-f[1])<=f[3]&&Math.abs(b-f[2])<=f[3]) return 1;
+  if(Math.abs(r-226)<=10&&Math.abs(g-226)<=10&&Math.abs(b-228)<=10) return 2;
+  return 0;
+}
+function rowRuns(cl,W,y,tol,minseg){
+  const out=[]; let s=-1,p=-1;
+  for(let x=0;x<W;x++){
+    if(cl[y*W+x]){
+      if(s<0){s=x;} else if(x-p>tol){ if(p-s>=minseg) out.push([s,p]); s=x; }
+      p=x;
+    }
+  }
+  if(s>=0&&p-s>=minseg) out.push([s,p]);
+  return out;
+}
+function scan(cl,W,H,tol){
+  const minseg=W*0.05, cand=[];
+  for(let y=0;y<H;y++){
+    const rs=rowRuns(cl,W,y,tol,minseg);
+    if(rs.length!==3) continue;
+    const w=rs.map(r=>r[1]-r[0]+1);
+    if(Math.max(...w)>Math.min(...w)*1.25) continue;
+    const g=[rs[1][0]-rs[0][1],rs[2][0]-rs[1][1]];
+    if(Math.max(...g)>Math.min(...w)*0.25) continue;
+    cand.push([y,rs]);
+  }
+  if(!cand.length) return null;
+  const bands=[]; let cur=[cand[0]];
+  for(let i=1;i<cand.length;i++){
+    if(cand[i][0]-cur[cur.length-1][0]<=3) cur.push(cand[i]);
+    else{bands.push(cur);cur=[cand[i]];}
+  }
+  bands.push(cur);
+  const b3=bands.filter(b=>b.length>=6);
+  if(b3.length!==3) return null;
+  const ivs=[],raw=[];
+  for(const b of b3){
+    const [y,rs]=b[Math.floor(b.length/2)];
+    let t=0;
+    for(const [s,e] of rs){
+      let n=0;
+      for(let x=s;x<=e;x++) if(cl[y*W+x]===1) n++;
+      t+=n/(e-s+1)*5;
+    }
+    raw.push(t); ivs.push(Math.max(0,Math.min(15,Math.round(t))));
+  }
+  return {ivs,raw};
+}
+function detect(img){
+  const sc=Math.min(1,2800/Math.max(img.naturalWidth,img.naturalHeight));
+  const W=Math.round(img.naturalWidth*sc), H=Math.round(img.naturalHeight*sc);
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const cx=cv.getContext('2d',{willReadFrequently:true});
+  cx.drawImage(img,0,0,W,H);
+  const d=cx.getImageData(0,0,W,H).data, cl=new Uint8Array(W*H);
+  for(let p=0,i=0;p<W*H;p++,i+=4) cl[p]=classify(d,i);
+  for(const tol of [2,3,4,5,6,7]){ const r=scan(cl,W,H,tol); if(r) return r; }
+  return null;
+}
+$('file').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const m=$('msg'); m.className='msg'; m.textContent='読み取り中…';
+  const img=new Image();
+  img.onload=()=>{
+    let r=null; try{ r=detect(img); }catch(err){ r=null; }
+    URL.revokeObjectURL(img.src);
+    if(!r){ m.className='msg ng'; m.textContent='バーを見つけられませんでした。評価画面の3本のバーが全部写るように撮り直すか、下のスライダーで手入力してください。'; return; }
+    ['a','d','s'].forEach((k,i)=>{ const el=$('r'+k); el.value=r.ivs[i]; el.dispatchEvent(new Event('input')); });
+    const err=Math.max(...r.raw.map(v=>Math.abs(v-Math.round(v))));
+    if(err>0.3){ m.className='msg ng'; m.textContent='読み取りました：'+r.ivs.join('-')+'（バーの境目が曖昧です。CPとHPを入れて検算してください）'; }
+    else{ m.className='msg ok'; m.textContent='読み取りました：'+r.ivs.join('-')+'。ポケモンを選ぶと順位が出ます。'; }
+  };
+  img.onerror=()=>{ m.className='msg ng'; m.textContent='画像を読み込めませんでした。'; };
+  img.src=URL.createObjectURL(f);
+  e.target.value='';
+});
+
+/* ===== 検索 ===== */
+let sel=null, maxLv=50;
+$('q').addEventListener('input',e=>{
+  const t=e.target.value.trim().toLowerCase(), h=$('hits');
+  if(!t){h.hidden=true;return;}
+  const num=/^\d+$/.test(t);
+  const r=[];
+  for(let i=0;i<POKE.length&&r.length<8;i++){
+    const p=POKE[i];
+    if(num?String(p[1])===t:(p[0].toLowerCase().includes(t)||p[5].toLowerCase().includes(t))) r.push(i);
+  }
+  if(!r.length){h.hidden=true;return;}
+  h.innerHTML=r.map(i=>`<div data-i="${i}">${POKE[i][0]}<small>No.${POKE[i][1]}</small></div>`).join('');
+  h.hidden=false;
+});
+$('hits').addEventListener('click',e=>{
+  const d=e.target.closest('div[data-i]'); if(!d) return;
+  sel=POKE[+d.dataset.i]; $('q').value=''; $('hits').hidden=true; $('now').hidden=false;
+  $('now').innerHTML=`<b>${sel[0]}</b><span>No.${sel[1]} · 種族値 ${sel[2]}/${sel[3]}/${sel[4]}</span>`;
+  render(); verify();
+});
+document.addEventListener('click',e=>{ if(!e.target.closest('.search')) $('hits').hidden=true; });
+
+/* ===== スライダー ===== */
+['a','d','s'].forEach(k=>{
+  const r=$('r'+k);
+  const upd=()=>{
+    $('o'+k).textContent=r.value;
+    r.style.setProperty('--f',(r.value/15*100)+'%');
+    const t=+$('ra').value + +$('rd').value + +$('rs').value;
+    $('sum').textContent=t; $('pct').textContent=(t/45*100).toFixed(1);
+    render(); verify();
+  };
+  r.addEventListener('input',upd); upd();
+});
+$('c50').onclick=()=>setCap(50); $('c51').onclick=()=>setCap(51);
+function setCap(v){
+  maxLv=v; $('c50').setAttribute('aria-pressed',v===50); $('c51').setAttribute('aria-pressed',v===51);
+  render();
+}
+
+/* ===== 検算 ===== */
+$('vcp').addEventListener('input',verify); $('vhp').addEventListener('input',verify);
+$('cand').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-iv]'); if(!b) return;
+  const v=b.dataset.iv.split('-');
+  ['a','d','s'].forEach((k,i)=>{ const el=$('r'+k); el.value=v[i]; el.dispatchEvent(new Event('input')); });
+});
+function verify(){
+  const box=$('vfmsg'), cd=$('cand');
+  const cp=parseInt($('vcp').value,10), hp=parseInt($('vhp').value,10);
+  cd.innerHTML='';
+  if(!sel||!cp||!hp){ box.className='vfmsg'; box.textContent=''; return; }
+  const a=+$('ra').value, d=+$('rd').value, s=+$('rs').value;
+  const list=candidates([sel[2],sel[3],sel[4]],cp,hp);
+  if(!list.length){ box.className='vfmsg ng'; box.textContent='そのCPとHPの組み合わせが見つかりません。ポケモンの選択か入力値を確認してください。'; return; }
+  const hit=list.find(x=>x.a===a&&x.d===d&&x.s===s);
+  if(hit){ box.className='vfmsg ok'; box.textContent=`CP・HPと一致しました（現在PL${hit.L}）。`; return; }
+  box.className='vfmsg ng';
+  box.textContent='今の個体値はCP・HPと合いません。候補はこちらです。';
+  const uniq=[...new Map(list.map(x=>[x.a+'-'+x.d+'-'+x.s,x])).values()].slice(0,10);
+  cd.innerHTML=uniq.map(x=>`<button data-iv="${x.a}-${x.d}-${x.s}">${x.a}-${x.d}-${x.s}</button>`).join('');
+}
+
+/* ===== 描画 ===== */
+function render(){
+  if(!sel) return;
+  const base=[sel[2],sel[3],sel[4]];
+  const a=+$('ra').value, d=+$('rd').value, s=+$('rs').value;
+  let html='';
+  for(const lg of LEAGUES){
+    if(lg.cap===500 && !sel[6]) continue;
+    const rows=table(base,lg.cap,maxLv);
+    const me=rows.find(r=>r.a===a&&r.d===d&&r.s===s), top=rows[0];
+    if(!me){
+      html+=`<div class="lg" style="--c:${lg.c}"><div class="nm">${lg.n}</div>
+        <div class="meta">CP${lg.cap}を超えるため参加不可</div><div class="na">—</div></div>`;
+      continue;
+    }
+    html+=`<div class="lg" style="--c:${lg.c}">
+      <div class="nm">${lg.n}${lg.cap?`（CP${lg.cap}以下）`:'（CP無制限）'}</div>
+      <div class="meta">PL${me.L} · CP${me.C} · 1位比 ${(me.sp/top.sp*100).toFixed(1)}%</div>
+      <div class="rk">${me.r.toLocaleString()}<i>位${rows.length<4096?' / '+rows.length.toLocaleString():''}</i></div>
+      <div class="best" style="grid-column:1/3">1位は ${top.a}-${top.d}-${top.s}（PL${top.L} · CP${top.C}）</div>
+    </div>`;
+  }
+  $('out').innerHTML=html;
+}
+</script>
+</body>
+</html>
