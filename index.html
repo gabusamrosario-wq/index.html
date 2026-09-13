@@ -260,6 +260,8 @@ ja:{
  noName:iv=>`個体値 ${iv}。名前を読めなかったので、下の欄で選んでください。`,
  unsure:(iv,n)=>`個体値 ${iv}。名前を「${n}」と読みましたが自信がないので、下の欄で選んでください。`,
  done:(iv,n)=>`個体値 ${iv} / ${n} と判定しました。`,
+ verified:(iv,n)=>`個体値 ${iv} / ${n}。CPとHPで検算済みです。`,
+ fixed:(iv,n,old)=>`個体値 ${iv} / ${n}。バーは ${old} と読めましたが、CPとHPと合わないため補正しました。`,
  pickForm:iv=>`個体値 ${iv}。姿を選んでください。`,
  shadow:' シャドウのようです。',
  fuzzy:' バーの境目が曖昧なので、CPとHPで検算してください。',
@@ -298,6 +300,8 @@ en:{
  noName:iv=>`IVs ${iv}. Could not read the name, so pick it below.`,
  unsure:(iv,n)=>`IVs ${iv}. Read the name as "${n}" but that is not reliable, so pick it below.`,
  done:(iv,n)=>`IVs ${iv} / identified as ${n}.`,
+ verified:(iv,n)=>`IVs ${iv} / ${n}. Cross-checked against CP and HP.`,
+ fixed:(iv,n,old)=>`IVs ${iv} / ${n}. The bars read ${old}, which does not fit the CP and HP, so it was corrected.`,
  pickForm:iv=>`IVs ${iv}. Pick the right form.`,
  shadow:' Looks like a Shadow Pokémon.',
  fuzzy:' The bar edges are unclear, so cross-check with CP and HP.',
@@ -393,54 +397,76 @@ function candidates(base,cp,hp){
 }
 
 /* ===== スクショから個体値を読む ===== */
-const FILLS=[[244,166,76,26],[224,126,132,22]];  // 通常の塗り / 個体値15の赤
+// バーの色はチーム（青・赤・黄）で変わるので、既知の色をすべて許容する
+const FILLS=[[244,166,76,30],[224,126,132,24],[201,106,104,26],[248,203,80,28]];
 function classify(d,i){
   const r=d[i],g=d[i+1],b=d[i+2];
   for(const f of FILLS) if(Math.abs(r-f[0])<=f[3]&&Math.abs(g-f[1])<=f[3]&&Math.abs(b-f[2])<=f[3]) return 1;
-  if(Math.abs(r-226)<=10&&Math.abs(g-226)<=10&&Math.abs(b-228)<=10) return 2;
+  if(Math.abs(r-227)<=14&&Math.abs(g-227)<=14&&Math.abs(b-229)<=14) return 2;
   return 0;
 }
-function rowRuns(cl,W,y,tol,minseg){
+function rowRuns(cl,W,y,tol){
   const out=[]; let s=-1,p=-1;
   for(let x=0;x<W;x++){
-    if(cl[y*W+x]){
-      if(s<0){s=x;} else if(x-p>tol){ if(p-s>=minseg) out.push([s,p]); s=x; }
-      p=x;
-    }
+    if(cl[y*W+x]){ if(s<0) s=x; p=x; }
+    else if(s>=0 && x-p>tol){ out.push([s,p]); s=-1; }
   }
-  if(s>=0&&p-s>=minseg) out.push([s,p]);
+  if(s>=0) out.push([s,p]);
   return out;
 }
+// 行全体ではなく「連続する3つの塊」を探す（同じ行に他のUIがあっても拾える）
+function triple(rs,minseg){
+  let best=null,bw=0;
+  for(let i=0;i+2<rs.length;i++){
+    const t=[rs[i],rs[i+1],rs[i+2]];
+    const w=t.map(r=>r[1]-r[0]+1);
+    const mn=Math.min(...w), mx=Math.max(...w);
+    if(mn<minseg||mx>mn*1.35) continue;
+    const g1=t[1][0]-t[0][1], g2=t[2][0]-t[1][1];
+    if(Math.max(g1,g2)>mn*0.35) continue;
+    const sum=w[0]+w[1]+w[2];
+    if(sum>bw){ bw=sum; best=t; }
+  }
+  return best;
+}
 function scan(cl,W,H,tol){
-  const minseg=W*0.05, cand=[];
+  const cand=[];
   for(let y=0;y<H;y++){
-    const rs=rowRuns(cl,W,y,tol,minseg);
-    if(rs.length!==3) continue;
-    const w=rs.map(r=>r[1]-r[0]+1);
-    if(Math.max(...w)>Math.min(...w)*1.25) continue;
-    const g=[rs[1][0]-rs[0][1],rs[2][0]-rs[1][1]];
-    if(Math.max(...g)>Math.min(...w)*0.25) continue;
-    cand.push([y,rs]);
+    const t=triple(rowRuns(cl,W,y,tol), W*0.035);
+    if(t) cand.push([y,t]);
   }
   if(!cand.length) return null;
   const bands=[]; let cur=[cand[0]];
   for(let i=1;i<cand.length;i++){
-    if(cand[i][0]-cur[cur.length-1][0]<=3) cur.push(cand[i]);
-    else{bands.push(cur);cur=[cand[i]];}
+    const prev=cur[cur.length-1];
+    const same=Math.abs(cand[i][1][0][0]-prev[1][0][0])<W*0.02;
+    if(cand[i][0]-prev[0]<=3 && same) cur.push(cand[i]);
+    else { bands.push(cur); cur=[cand[i]]; }
   }
   bands.push(cur);
-  const b3=bands.filter(b=>b.length>=6);
-  if(b3.length!==3) return null;
+  const minrows=Math.max(3,Math.round(H*0.002));
+  let b3=bands.filter(b=>b.length>=minrows).sort((a,b)=>a[0][0]-b[0][0]);
+  if(b3.length<3) return null;
+  if(b3.length>3){
+    let best=null,bs=1e9;
+    for(let i=0;i+2<b3.length;i++){
+      const t=[b3[i],b3[i+1],b3[i+2]];
+      const L=t.map(x=>x[0][1][0][0]), Y=t.map(x=>x[0][0]);
+      const sc=(Math.max(...L)-Math.min(...L))/W + Math.abs((Y[1]-Y[0])-(Y[2]-Y[1]))/H*3;
+      if(sc<bs){ bs=sc; best=t; }
+    }
+    b3=best;
+  }
   const ivs=[],raw=[];
   for(const b of b3){
     const [y,rs]=b[Math.floor(b.length/2)];
-    let t=0;
+    let tot=0;
     for(const [s,e] of rs){
       let n=0;
       for(let x=s;x<=e;x++) if(cl[y*W+x]===1) n++;
-      t+=n/(e-s+1)*5;
+      tot+=n/(e-s+1)*5;
     }
-    raw.push(t); ivs.push(Math.max(0,Math.min(15,Math.round(t))));
+    raw.push(tot); ivs.push(Math.max(0,Math.min(15,Math.round(tot))));
   }
   return {ivs,raw};
 }
@@ -471,35 +497,52 @@ async function analyzeOne(file){
   try{ pack=prepare(img); }catch(e){}
   URL.revokeObjectURL(img.src);
   if(!pack||!pack.iv) return {err:'bar'};
-  const ivs=pack.iv.ivs;
-  const fuzzy=Math.max(...pack.iv.raw.map(v=>Math.abs(v-Math.round(v))))>0.3;
-  const out={ivs,fuzzy,shadow:pack.shadow,sum:ivs[0]+ivs[1]+ivs[2]};
+  const barIVs=pack.iv.ivs, raw=pack.iv.raw;
+  const out={ivs:barIVs.slice(), raw, shadow:pack.shadow,
+              sum:barIVs[0]+barIVs[1]+barIVs[2],
+              fuzzy:Math.max(...raw.map(v=>Math.abs(v-Math.round(v))))>0.3};
   const w=await getWorker();
   if(!w) return out;
+  let hpD='', cpD='';
   try{
     await w.setParameters({tessedit_pageseg_mode:'7',tessedit_char_whitelist:''});
     out.nm=(await w.recognize(pack.name)).data.text.replace(/[\s\u3000]/g,'');
     if(pack.hp){
       await w.setParameters({tessedit_char_whitelist:'0123456789/'});
-      const t=(await w.recognize(pack.hp)).data.text.replace(/[^0-9/]/g,'').split('/')[0];
-      if(t) out.hp=parseInt(t,10);
+      const t=(await w.recognize(pack.hp)).data.text.replace(/[^0-9/]/g,'');
+      hpD=t.replace(/\//g,'');
+      const head=t.split('/')[0];
+      if(head && head===t.split('/')[1]) hpD=head;   // 「111/111」を素直に解釈できた場合
+    }
+    if(pack.cp){
+      await w.setParameters({tessedit_char_whitelist:'0123456789'});
+      cpD=(await w.recognize(pack.cp)).data.text.replace(/[^0-9]/g,'');
     }
   }catch(e){ return out; }
+  out.hpD=hpD; out.cpD=cpD;
   if(!out.nm) return out;
   const mt=matchName(out.nm);
   if(mt.d>2){ out.unsure=true; return out; }
-  let idx=mt.idx;
-  if(out.hp){ const f2=idx.filter(i=>hpFits(POKE[i],ivs[2],out.hp)); if(f2.length) idx=f2; }
-  out.idx=idx;
-  if(idx.length===1 && out.hp){
-    const cands=cpCandidates(POKE[idx[0]],ivs,out.hp);
-    if(cands.length>1 && pack.cp){
-      try{
-        await w.setParameters({tessedit_char_whitelist:'0123456789'});
-        const t=(await w.recognize(pack.cp)).data.text.replace(/[^0-9]/g,'');
-        out.cp=pickCP(cands,t);
-      }catch(e){ out.cp=pickCP(cands,''); }
-    } else out.cp=pickCP(cands,'');
+  out.idx=mt.idx;
+  // 名前の候補が複数あっても、CPとHPが合う種族はふつう1つに絞れる
+  const fix=resolveState(mt.idx, raw, hpD, cpD);
+  if(fix){
+    out.idx=[fix.idx];
+    out.corrected = fix.ivs.join('-')!==barIVs.join('-');
+    out.ivs=fix.ivs; out.sum=fix.ivs[0]+fix.ivs[1]+fix.ivs[2];
+    out.cp=fix.cp; out.hp=fix.hp; out.level=fix.L; out.verified=true;
+    if(fix.cpLo!==undefined){ out.cpLo=fix.cpLo; out.cpHi=fix.cpHi; out.cp=null; }
+  }else{
+    // 検算できなかった場合は、名前だけで絞ってHPで補助
+    let idx=mt.idx;
+    const hpNum=parseInt(hpD.length%2===0?hpD.slice(0,hpD.length/2):hpD,10);
+    if(hpNum){ const f2=idx.filter(i=>hpFits(POKE[i],barIVs[2],hpNum)); if(f2.length) idx=f2; }
+    out.idx=idx;
+    if(idx.length===1){
+      const cands=cpCandidates(POKE[idx[0]],barIVs,hpNum);
+      if(cands.length) out.cp=pickCP(cands,cpD);
+      if(hpNum) out.hp=hpNum;
+    }
   }
   return out;
 }
@@ -544,7 +587,10 @@ function showSingle(r){
   if(r.cp) $('vcp').value=r.cp;
   if(r.idx.length===1){
     selectPoke(r.idx[0]);
-    m.className='msg ok'; m.textContent=t().done(r.ivs.join('-'),dispName(POKE[r.idx[0]]))+tail;
+    const nm=dispName(POKE[r.idx[0]]), s=r.ivs.join('-');
+    m.className='msg ok';
+    m.textContent=(r.corrected ? t().fixed(s,nm,r.raw.map(v=>Math.round(v)).join('-'))
+                  : r.verified ? t().verified(s,nm) : t().done(s,nm))+tail;
   }else{
     m.className='msg ok'; m.textContent=t().pickForm(r.ivs.join('-'))+tail;
     $('pick').innerHTML=r.idx.slice(0,8).map(i=>`<button data-i="${i}">${dispName(POKE[i])}</button>`).join('');
@@ -585,8 +631,8 @@ function renderList(){
     const fmt=v=>v==null?'–':L.rankBig(v)+L.rankSuf;
     html+=`<button class="row" data-i="${o.i}" aria-pressed="${o.i===selIdxRow}">
       <div class="no">${n+1}</div>
-      <div class="nm2">${nm}${r.shadow?' ✦':''}</div>
-      <div class="cp">${r.cp?'CP'+r.cp:''}</div>
+      <div class="nm2">${nm}${r.shadow?' ✦':''}${r.corrected?' ⟲':(r.verified?' ✓':'')}</div>
+      <div class="cp">${r.cp?'CP'+r.cp:(r.cpLo?'CP'+r.cpLo+'–'+r.cpHi:'')}</div>
       <div class="iv2">${r.ivs.join('-')} · ${L.total} ${r.sum}/45 (${(r.sum/45*100).toFixed(1)}%)</div>
       <div class="rk2">${L.leagues[1]} ${fmt(gl)} · ${L.leagues[2]} ${fmt(ul)} · ${L.leagues[3]} ${fmt(ml)}</div>
     </button>`;
@@ -619,11 +665,12 @@ function prepare(img){
   const d=cx.getImageData(0,0,W,H).data, cl=new Uint8Array(W*H);
   for(let p=0,i=0;p<W*H;p++,i+=4) cl[p]=classify(d,i);
   let iv=null;
-  for(const tol of [2,3,4,5,6,7]){ iv=scan(cl,W,H,tol); if(iv) break; }
+  for(const tol of [2,3,4,5,6,8,10]){ iv=scan(cl,W,H,tol); if(iv) break; }
   const g=greenBar(d,W,H);
-  const name=g?binCanvas(d,W,H,W*0.20,g.top-H*0.043,W*0.80,g.top-H*0.007,160,2):null;
-  const hp=g?binCanvas(d,W,H,W*0.30,g.bot+H*0.003,W*0.70,g.bot+H*0.027,170,2):null;
-  const cp=cpCanvas(d,W,H);
+  // UIは画面の「幅」に連動して拡大縮小するため、余白はすべてWを基準にする
+  const name=g?binCanvas(d,W,H,W*0.20,g.top-W*0.0932,W*0.80,g.top-W*0.0152,160,2):null;
+  const hp=g?binCanvas(d,W,H,W*0.30,g.bot+W*0.0065,W*0.70,g.bot+W*0.0585,170,2):null;
+  const cp=cpCanvas(d,W,H,g);
   let pur=0,tot=0;
   for(let y=(H*0.14)|0;y<H*0.35;y++)for(let x=(W*0.20)|0;x<W*0.80;x++){
     const i=(y*W+x)*4, R=d[i],G=d[i+1],B=d[i+2]; tot++;
@@ -726,10 +773,13 @@ function colRuns(M){
     return [a,b,t,bt,n];
   }).filter(r=>r[4]>=12);
 }
-function cpCanvas(d,W,H){
-  const M=lightMask(d,W,H,W*0.18,H*0.035,W*0.82,H*0.105,230);
+function cpCanvas(d,W,H,g){
+  // CPは画面上部。緑バーより上の範囲だけを見て、時計などを拾わないよう横幅も絞る
+  const yEnd=Math.min(H*0.22, g?g.top*0.30:H*0.22);
+  const M=lightMask(d,W,H,W*0.18,0,W*0.82,yEnd,230);
   if(!M) return null;
-  let rs=colRuns(M).filter(r=>{const hh=r[3]-r[2]+1; return hh>M.h*0.2 && hh<M.h*0.8;});
+  // CPの数字の高さはおよそ画面幅の6%。掛け離れたものは除く
+  let rs=colRuns(M).filter(r=>{const hh=r[3]-r[2]+1; return hh>W*0.030 && hh<W*0.095;});
   if(!rs.length) return null;
   const hmax=Math.max(...rs.map(r=>r[3]-r[2]+1));
   rs=rs.filter(r=>(r[3]-r[2]+1)>=hmax*0.75);
@@ -765,6 +815,53 @@ function pickCP(cands,txt){
   for(const c of cands){
     const sc=lev(txt,String(c))*10+Math.abs(String(c).length-txt.length);
     if(sc<bs){bs=sc;best=c;}
+  }
+  return best;
+}
+
+/* ===== 読み取り結果の相互検算 =====
+   バー・CP・HPは互いに独立した読み取りなので、
+   「この種族で実際に存在しうる状態」の中から一番つじつまの合うものを選ぶ */
+function numMatch(v,digits){
+  if(!digits) return 0;
+  const s=String(v);
+  if(digits===s || digits===s+s) return 2;   // 完全一致
+  if(digits.indexOf(s)>=0) return 1;         // 正解がOCR文字列に含まれる（余計な文字の混入）
+  return 0;
+}
+function resolveState(idxList, raw, hpD, cpD){
+  if(!idxList||!idxList.length) return null;
+  const lo=raw.map(v=>Math.max(0,Math.round(v)-2));
+  const hi=raw.map(v=>Math.min(15,Math.round(v)+2));
+  let best=null, ties=[];
+  for(const idx of idxList){
+    const p=POKE[idx], BA=p[2], BD=p[3], BS=p[4];
+    for(let a=lo[0];a<=hi[0];a++)
+    for(let d=lo[1];d<=hi[1];d++)
+    for(let s=lo[2];s<=hi[2];s++){
+      const ivd=Math.abs(raw[0]-a)+Math.abs(raw[1]-d)+Math.abs(raw[2]-s);
+      if(ivd>4.5) continue;
+      const rt=(BA+a)*Math.sqrt(BD+d)*Math.sqrt(BS+s)/10;
+      for(const L of ALL){
+        const m=CPM[L];
+        const hp=Math.floor((BS+s)*m);
+        const cp=Math.max(10,Math.floor(rt*m*m));
+        const w=numMatch(hp,hpD)+numMatch(cp,cpD);
+        if(w<2) continue;                      // 少なくとも片方が確かに合うこと
+        const sc=-w*10+ivd;
+        if(!best||sc<best.sc-1e-9){ best={sc,idx,ivs:[a,d,s],cp,hp,L,w}; ties=[best]; }
+        else if(Math.abs(sc-best.sc)<1e-9) ties.push({sc,idx,ivs:[a,d,s],cp,hp,L,w});
+      }
+    }
+  }
+  // 同点が残る場合（CPが読めずHPだけで絞れた等）はCPの中央値を採る
+  if(best && ties.length>1){
+    const same=ties.filter(x=>x.idx===best.idx && x.ivs.join()===best.ivs.join());
+    const cps=[...new Set(same.map(x=>x.cp))].sort((x,y)=>x-y);
+    if(cps.length>1){
+      // CPが読めずHPだけでは強化レベルを1つに絞れない。当てずっぽうで決めず幅で示す
+      best=same[0]; best.cpLo=cps[0]; best.cpHi=cps[cps.length-1];
+    }
   }
   return best;
 }
@@ -862,7 +959,11 @@ function verify(){
   if(hit){ box.className='vfmsg ok'; box.textContent=t().vfOk(hit.L); return; }
   box.className='vfmsg ng';
   box.textContent=t().vfNg;
-  const uniq=[...new Map(list.map(x=>[x.a+'-'+x.d+'-'+x.s,x])).values()].slice(0,10);
+  // 今読めている個体値に近い順に並べる（バーの誤読はふつう±1なので上位に来る）
+  const uniq=[...new Map(list.map(x=>[x.a+'-'+x.d+'-'+x.s,x])).values()]
+    .sort((x,y)=>(Math.abs(x.a-a)+Math.abs(x.d-d)+Math.abs(x.s-s))
+                -(Math.abs(y.a-a)+Math.abs(y.d-d)+Math.abs(y.s-s)))
+    .slice(0,10);
   cd.innerHTML=uniq.map(x=>`<button data-iv="${x.a}-${x.d}-${x.s}">${x.a}-${x.d}-${x.s}</button>`).join('');
 }
 
