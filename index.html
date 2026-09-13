@@ -120,6 +120,27 @@ input[type=range]:focus-visible{outline:2px solid var(--bar);outline-offset:4px;
 .vfmsg{font-size:12.5px;margin:8px 0 0;color:var(--dim);line-height:1.7}
 .vfmsg.ok{color:var(--bar)} .vfmsg.ng{color:#f0b45a}
 .cand{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.list{margin:4px 0 18px}
+.sortbar{display:flex;gap:6px;align-items:center;margin:0 0 8px;flex-wrap:wrap}
+.sortbar span{font-size:12px;color:var(--dim)}
+.sortbar button{
+  padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:var(--panel);
+  color:var(--dim);font-family:inherit;font-size:12.5px;cursor:pointer;
+}
+.sortbar button[aria-pressed=true]{background:#24406b;border-color:var(--gl);color:#fff}
+.row{
+  display:grid;grid-template-columns:26px 1fr auto;gap:4px 10px;align-items:baseline;
+  width:100%;text-align:left;padding:12px 4px;background:none;border:0;border-top:1px solid var(--line);
+  color:var(--ink);font-family:inherit;cursor:pointer;
+}
+.row:last-child{border-bottom:1px solid var(--line)}
+.row:active{background:#182338}
+.row .no{font-size:13px;font-weight:700;color:var(--dim);font-variant-numeric:tabular-nums}
+.row .nm2{font-size:15px;font-weight:700}
+.row .cp{font-size:13px;color:var(--dim);font-variant-numeric:tabular-nums;white-space:nowrap}
+.row .iv2{grid-column:2/4;font-size:12.5px;color:var(--bar);font-variant-numeric:tabular-nums}
+.row .rk2{grid-column:2/4;font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}
+.row[aria-pressed=true]{background:#15233a}
 .evo{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:-8px 0 16px}
 .evo span{font-size:12px;color:var(--dim);margin-right:2px}
 .evo button{
@@ -169,9 +190,10 @@ input[type=range]:focus-visible{outline:2px solid var(--bar);outline-offset:4px;
 </div>
 <p class="sub" data-t="sub">評価画面のスクショから個体値を読み取って、各リーグの順位を出します。</p>
 
-<label class="shot"><span data-t="shot">スクショを選ぶ</span><input type="file" id="file" accept="image/*" hidden></label>
+<label class="shot"><span data-t="shot">スクショを選ぶ</span><input type="file" id="file" accept="image/*" multiple hidden></label>
 <p class="msg" id="msg"></p>
 <div class="cand" id="pick"></div>
+<div class="list" id="list" hidden></div>
 
 <div class="search">
   <input type="text" id="q" placeholder="ここにポケモン名を入力（例：ソーナンス）" autocomplete="off" spellcheck="false">
@@ -245,6 +267,9 @@ ja:{
  vfNone:'そのCPとHPの組み合わせが見つかりません。ポケモンの選択か入力値を確認してください。',
  vfOk:L=>`CP・HPと一致しました（現在PL${L}）。`,
  vfNg:'今の個体値はCP・HPと合いません。候補はこちらです。',
+batching:(i,n)=>`${n}枚中 ${i}枚目を読み取り中…`,
+ batchDone:(ok,n)=>`${n}枚中 ${ok}枚を判定しました。行をタップすると詳細が出ます。`,
+ sortBy:'並び替え', sortSum:'個体値合計', rowFail:'読み取れませんでした',
  note:['順位は「攻撃×防御×HP（ステータス積）」の大きい順です。CP上限を超えない最大レベルまで強化した状態で、4096通りの個体値すべてを比較しています。',
        '上限CPに届かないポケモンは全個体が最大レベルまで上げられるため、どのリーグでも順位＝個体値の高さそのものになります。',
        '進化しても個体値は変わらないので、進化後の順位は同じ個体値を進化後の種族値で計算し直したものです。',
@@ -280,6 +305,9 @@ en:{
  vfNone:'No IVs match that CP and HP. Check the Pokémon and the numbers.',
  vfOk:L=>`Matches the CP and HP (currently L${L}).`,
  vfNg:'These IVs do not match the CP and HP. Here are the candidates.',
+batching:(i,n)=>`Reading ${i} of ${n}…`,
+ batchDone:(ok,n)=>`Identified ${ok} of ${n}. Tap a row for details.`,
+ sortBy:'Sort by', sortSum:'IV total', rowFail:'Could not read',
  note:['Rank is by stat product (Attack × Defense × HP), powered up to the highest level under the CP cap, compared across all 4096 IV combinations.',
        'A Pokémon that cannot reach the CP cap has every IV spread maxed at the same level, so the rank is simply how high the IVs are.',
        'IVs do not change on evolution, so an evolution\u2019s rank is the same IVs recalculated with its base stats.',
@@ -427,64 +455,160 @@ function detect(img){
   for(const tol of [2,3,4,5,6,7]){ const r=scan(cl,W,H,tol); if(r) return r; }
   return null;
 }
-$('file').addEventListener('change',e=>{
-  const f=e.target.files[0]; if(!f) return;
-  const m=$('msg'); m.className='msg'; m.textContent=t().reading; $('pick').innerHTML='';
-  const img=new Image();
-  img.onload=async()=>{
-    let r=null,pack=null;
-    try{ pack=prepare(img); r=pack&&pack.iv; }catch(err){ r=null; }
-    URL.revokeObjectURL(img.src);
-    if(!r){ m.className='msg ng'; m.textContent=t().noBar; return; }
-    ['a','d','s'].forEach((k,i)=>{ const el=$('r'+k); el.value=r.ivs[i]; el.dispatchEvent(new Event('input')); });
-    const fuzzy=Math.max(...r.raw.map(v=>Math.abs(v-Math.round(v))))>0.3;
-    const shadow=pack.shadow;
-    m.className='msg'; m.textContent=t().idIng(r.ivs.join('-'));
-    const w=await getWorker();
-    if(!w){
-      m.className='msg ok';
-      m.textContent=t().noOcr(r.ivs.join('-'));
-      return;
+let RESULTS=[], SORT='sum';
+
+function loadImg(file){
+  return new Promise((res,rej)=>{
+    const img=new Image();
+    img.onload=()=>res(img); img.onerror=()=>rej(new Error('load'));
+    img.src=URL.createObjectURL(file);
+  });
+}
+
+async function analyzeOne(file){
+  const img=await loadImg(file);
+  let pack=null;
+  try{ pack=prepare(img); }catch(e){}
+  URL.revokeObjectURL(img.src);
+  if(!pack||!pack.iv) return {err:'bar'};
+  const ivs=pack.iv.ivs;
+  const fuzzy=Math.max(...pack.iv.raw.map(v=>Math.abs(v-Math.round(v))))>0.3;
+  const out={ivs,fuzzy,shadow:pack.shadow,sum:ivs[0]+ivs[1]+ivs[2]};
+  const w=await getWorker();
+  if(!w) return out;
+  try{
+    await w.setParameters({tessedit_pageseg_mode:'7',tessedit_char_whitelist:''});
+    out.nm=(await w.recognize(pack.name)).data.text.replace(/[\s\u3000]/g,'');
+    if(pack.hp){
+      await w.setParameters({tessedit_char_whitelist:'0123456789/'});
+      const t=(await w.recognize(pack.hp)).data.text.replace(/[^0-9/]/g,'').split('/')[0];
+      if(t) out.hp=parseInt(t,10);
     }
-    let nm='',hp=null;
-    try{
-      await w.setParameters({tessedit_pageseg_mode:'7',tessedit_char_whitelist:''});
-      nm=(await w.recognize(pack.name)).data.text.replace(/[\s\u3000]/g,'');
-      if(pack.hp){
-        await w.setParameters({tessedit_char_whitelist:'0123456789/'});
-        const t=(await w.recognize(pack.hp)).data.text.replace(/[^0-9/]/g,'').split('/')[0];
-        if(t) hp=parseInt(t,10);
-      }
-    }catch(err){}
-    const tail=(shadow?t().shadow:'')+(fuzzy?t().fuzzy:'');
-    if(!nm){
-      m.className='msg ok';
-      m.textContent=t().noName(r.ivs.join('-'))+tail;
-      return;
-    }
-    const mt=matchName(nm);
-    let idx=mt.idx;
-    if(hp){ const f2=idx.filter(i=>hpFits(POKE[i],r.ivs[2],hp)); if(f2.length) idx=f2; }
-    if(mt.d>2){
-      m.className='msg ng';
-      m.textContent=t().unsure(r.ivs.join('-'),nm)+tail;
-      return;
-    }
-    if(hp) $('vhp').value=hp;
-    if(idx.length===1){
-      selectPoke(idx[0]);
-      m.className='msg ok';
-      m.textContent=t().done(r.ivs.join('-'),dispName(POKE[idx[0]]))+tail;
-    }else{
-      m.className='msg ok';
-      m.textContent=t().pickForm(r.ivs.join('-'))+tail;
-      $('pick').innerHTML=idx.slice(0,8).map(i=>`<button data-i="${i}">${dispName(POKE[i])}</button>`).join('');
-    }
-  };
-  img.onerror=()=>{ m.className='msg ng'; m.textContent=t().badImg; };
-  img.src=URL.createObjectURL(f);
-  e.target.value='';
+  }catch(e){ return out; }
+  if(!out.nm) return out;
+  const mt=matchName(out.nm);
+  if(mt.d>2){ out.unsure=true; return out; }
+  let idx=mt.idx;
+  if(out.hp){ const f2=idx.filter(i=>hpFits(POKE[i],ivs[2],out.hp)); if(f2.length) idx=f2; }
+  out.idx=idx;
+  if(idx.length===1 && out.hp){
+    const cands=cpCandidates(POKE[idx[0]],ivs,out.hp);
+    if(cands.length>1 && pack.cp){
+      try{
+        await w.setParameters({tessedit_char_whitelist:'0123456789'});
+        const t=(await w.recognize(pack.cp)).data.text.replace(/[^0-9]/g,'');
+        out.cp=pickCP(cands,t);
+      }catch(e){ out.cp=pickCP(cands,''); }
+    } else out.cp=pickCP(cands,'');
+  }
+  return out;
+}
+
+$('file').addEventListener('change',async e=>{
+  const files=[...e.target.files]; e.target.value='';
+  if(!files.length) return;
+  const m=$('msg'); $('pick').innerHTML=''; $('list').hidden=true; RESULTS=[];
+  if(files.length===1){
+    m.className='msg'; m.textContent=t().reading;
+    const r=await analyzeOne(files[0]);
+    showSingle(r);
+    return;
+  }
+  const res=[];
+  for(let i=0;i<files.length;i++){
+    m.className='msg'; m.textContent=t().batching(i+1,files.length);
+    res.push(await analyzeOne(files[i]));
+  }
+  RESULTS=res;
+  const ok=res.filter(r=>r.idx&&r.idx.length===1).length;
+  m.className=ok?'msg ok':'msg ng';
+  m.textContent=t().batchDone(ok,res.length);
+  renderList();
+  const first=RESULTS.findIndex(r=>r.idx&&r.idx.length===1);
+  if(first>=0){
+    const best=RESULTS.map((r,i)=>({r,i})).filter(o=>o.r.idx&&o.r.idx.length===1)
+      .sort((x,y)=>y.r.sum-x.r.sum)[0];
+    selectRow(best.i);
+  }
 });
+
+function showSingle(r){
+  const m=$('msg');
+  if(r.err){ m.className='msg ng'; m.textContent=t().noBar; return; }
+  setIVs(r.ivs);
+  const tail=(r.shadow?t().shadow:'')+(r.fuzzy?t().fuzzy:'');
+  if(!r.nm && !r.idx){ m.className='msg ok'; m.textContent=t().noOcr(r.ivs.join('-'))+tail; return; }
+  if(r.unsure){ m.className='msg ng'; m.textContent=t().unsure(r.ivs.join('-'),r.nm)+tail; return; }
+  if(!r.idx){ m.className='msg ok'; m.textContent=t().noName(r.ivs.join('-'))+tail; return; }
+  if(r.hp) $('vhp').value=r.hp;
+  if(r.cp) $('vcp').value=r.cp;
+  if(r.idx.length===1){
+    selectPoke(r.idx[0]);
+    m.className='msg ok'; m.textContent=t().done(r.ivs.join('-'),dispName(POKE[r.idx[0]]))+tail;
+  }else{
+    m.className='msg ok'; m.textContent=t().pickForm(r.ivs.join('-'))+tail;
+    $('pick').innerHTML=r.idx.slice(0,8).map(i=>`<button data-i="${i}">${dispName(POKE[i])}</button>`).join('');
+  }
+}
+function setIVs(v){
+  ['a','d','s'].forEach((k,i)=>{ const el=$('r'+k); el.value=v[i]; el.dispatchEvent(new Event('input')); });
+}
+
+function rankOf(r,cap){
+  if(!r.idx||r.idx.length!==1) return null;
+  const p=POKE[r.idx[0]];
+  const rows=table([p[2],p[3],p[4]],cap,maxLv);
+  const me=rows.find(x=>x.a===r.ivs[0]&&x.d===r.ivs[1]&&x.s===r.ivs[2]);
+  return me?me.r:null;
+}
+function renderList(){
+  const box=$('list');
+  if(!RESULTS.length){ box.hidden=true; return; }
+  const idxOf={sum:null,gl:1500,ul:2500,ml:0};
+  const arr=RESULTS.map((r,i)=>({r,i}));
+  arr.sort((x,y)=>{
+    if(SORT==='sum') return y.r.sum-x.r.sum;
+    const a=rankOf(x.r,idxOf[SORT]), b=rankOf(y.r,idxOf[SORT]);
+    if(a==null) return 1; if(b==null) return -1;
+    return a-b;
+  });
+  const L=t();
+  let html=`<div class="sortbar"><span>${L.sortBy}</span>`
+    +[['sum',L.sortSum],['gl',L.leagues[1]],['ul',L.leagues[2]],['ml',L.leagues[3]]]
+      .map(([k,lab])=>`<button data-s="${k}" aria-pressed="${SORT===k}">${lab}</button>`).join('')
+    +'</div>';
+  arr.forEach((o,n)=>{
+    const r=o.r;
+    if(r.err){ html+=`<button class="row"><div class="no">–</div><div class="nm2">${L.rowFail}</div></button>`; return; }
+    const nm=(r.idx&&r.idx.length===1)?dispName(POKE[r.idx[0]]):(r.nm||'?');
+    const gl=rankOf(r,1500), ul=rankOf(r,2500), ml=rankOf(r,0);
+    const fmt=v=>v==null?'–':L.rankBig(v)+L.rankSuf;
+    html+=`<button class="row" data-i="${o.i}" aria-pressed="${o.i===selIdxRow}">
+      <div class="no">${n+1}</div>
+      <div class="nm2">${nm}${r.shadow?' ✦':''}</div>
+      <div class="cp">${r.cp?'CP'+r.cp:''}</div>
+      <div class="iv2">${r.ivs.join('-')} · ${L.total} ${r.sum}/45 (${(r.sum/45*100).toFixed(1)}%)</div>
+      <div class="rk2">${L.leagues[1]} ${fmt(gl)} · ${L.leagues[2]} ${fmt(ul)} · ${L.leagues[3]} ${fmt(ml)}</div>
+    </button>`;
+  });
+  box.innerHTML=html; box.hidden=false;
+}
+let selIdxRow=-1;
+$('list').addEventListener('click',e=>{
+  const s=e.target.closest('button[data-s]');
+  if(s){ SORT=s.dataset.s; renderList(); return; }
+  const b=e.target.closest('button[data-i]');
+  if(b) selectRow(+b.dataset.i);
+});
+function selectRow(i){
+  const r=RESULTS[i];
+  if(!r||r.err) return;
+  selIdxRow=i;
+  setIVs(r.ivs);
+  $('vhp').value=r.hp||''; $('vcp').value=r.cp||'';
+  if(r.idx&&r.idx.length===1) selectPoke(r.idx[0]);
+  renderList();
+}
 
 function prepare(img){
   const sc=Math.min(1,2800/Math.max(img.naturalWidth,img.naturalHeight));
@@ -499,12 +623,13 @@ function prepare(img){
   const g=greenBar(d,W,H);
   const name=g?binCanvas(d,W,H,W*0.20,g.top-H*0.043,W*0.80,g.top-H*0.007,160,2):null;
   const hp=g?binCanvas(d,W,H,W*0.30,g.bot+H*0.003,W*0.70,g.bot+H*0.027,170,2):null;
+  const cp=cpCanvas(d,W,H);
   let pur=0,tot=0;
   for(let y=(H*0.14)|0;y<H*0.35;y++)for(let x=(W*0.20)|0;x<W*0.80;x++){
     const i=(y*W+x)*4, R=d[i],G=d[i+1],B=d[i+2]; tot++;
     if(R-G>35&&B-G>45&&B>90&&R>60) pur++;
   }
-  return {iv,name,hp,shadow:tot&&pur/tot>0.02};
+  return {iv,name,hp,cp,shadow:tot&&pur/tot>0.02};
 }
 
 /* ===== 画像から名前とHPを読む ===== */
@@ -574,6 +699,76 @@ function hpFits(p,s,hp){
   return false;
 }
 
+/* ===== CPを読む（逆算した候補から選ぶ方式） ===== */
+function lightMask(d,W,H,x0,y0,x1,y1,thr){
+  x0=Math.max(0,x0|0); y0=Math.max(0,y0|0); x1=Math.min(W,x1|0); y1=Math.min(H,y1|0);
+  const w=x1-x0, h=y1-y0;
+  if(w<10||h<10) return null;
+  const m=new Uint8Array(w*h);
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+    const i=((y+y0)*W+(x+x0))*4;
+    m[y*w+x] = (Math.min(d[i],d[i+1],d[i+2])>thr)?1:0;
+  }
+  return {m,w,h,x0,y0};
+}
+function colRuns(M){
+  const {m,w,h}=M, out=[];
+  let s=-1,p=-1;
+  for(let x=0;x<w;x++){
+    let on=0; for(let y=0;y<h;y++) if(m[y*w+x]){on=1;break;}
+    if(on){ if(s<0) s=x; p=x; }
+    else if(s>=0 && x-p>6){ out.push([s,p]); s=-1; }
+  }
+  if(s>=0) out.push([s,p]);
+  return out.map(([a,b])=>{
+    let t=h,bt=-1,n=0;
+    for(let y=0;y<h;y++)for(let x=a;x<=b;x++) if(m[y*w+x]){ n++; if(y<t)t=y; if(y>bt)bt=y; }
+    return [a,b,t,bt,n];
+  }).filter(r=>r[4]>=12);
+}
+function cpCanvas(d,W,H){
+  const M=lightMask(d,W,H,W*0.18,H*0.035,W*0.82,H*0.105,230);
+  if(!M) return null;
+  let rs=colRuns(M).filter(r=>{const hh=r[3]-r[2]+1; return hh>M.h*0.2 && hh<M.h*0.8;});
+  if(!rs.length) return null;
+  const hmax=Math.max(...rs.map(r=>r[3]-r[2]+1));
+  rs=rs.filter(r=>(r[3]-r[2]+1)>=hmax*0.75);
+  if(!rs.length) return null;
+  const a0=Math.max(0,Math.min(...rs.map(r=>r[0]))-6), a1=Math.min(M.w,Math.max(...rs.map(r=>r[1]))+7);
+  const b0=Math.max(0,Math.min(...rs.map(r=>r[2]))-4), b1=Math.min(M.h,Math.max(...rs.map(r=>r[3]))+5);
+  const w=a1-a0, hh=b1-b0;
+  const c=document.createElement('canvas'); c.width=w; c.height=hh;
+  const cx=c.getContext('2d'), out=cx.createImageData(w,hh);
+  for(let y=0;y<hh;y++)for(let x=0;x<w;x++){
+    const v=M.m[(y+b0)*M.w+(x+a0)]?0:255, j=(y*w+x)*4;
+    out.data[j]=out.data[j+1]=out.data[j+2]=v; out.data[j+3]=255;
+  }
+  cx.putImageData(out,0,0);
+  const c2=document.createElement('canvas'); c2.width=w*3; c2.height=hh*3;
+  c2.getContext('2d').drawImage(c,0,0,c2.width,c2.height);
+  return c2;
+}
+function cpCandidates(p,ivs,hp){
+  const [a,d,s]=ivs, set=new Set();
+  for(const L of ALL){
+    const m=CPM[L];
+    if(Math.floor((p[4]+s)*m)!==hp) continue;
+    set.add(Math.max(10,Math.floor((p[2]+a)*Math.sqrt(p[3]+d)*Math.sqrt(p[4]+s)*m*m/10)));
+  }
+  return [...set].sort((x,y)=>x-y);
+}
+function pickCP(cands,txt){
+  if(!cands.length) return null;
+  if(cands.length===1) return cands[0];
+  if(!txt) return cands[Math.floor(cands.length/2)];
+  let best=cands[0], bs=1e9;
+  for(const c of cands){
+    const sc=lev(txt,String(c))*10+Math.abs(String(c).length-txt.length);
+    if(sc<bs){bs=sc;best=c;}
+  }
+  return best;
+}
+
 /* ===== 検索 ===== */
 let sel=null, maxLv=50, rootIdx=-1, selIdx=-1;
 $('q').addEventListener('input',e=>{
@@ -640,12 +835,12 @@ function setLang(v){
   LANG=v;
   if(WORKER){ try{WORKER.terminate()}catch(e){} WORKER=null; WORKER_DEAD=false; }
   $('msg').textContent=''; $('msg').className='msg'; $('pick').innerHTML='';
-  applyLang();
+  applyLang(); renderList();
 }
 $('c50').onclick=()=>setCap(50); $('c51').onclick=()=>setCap(51);
 function setCap(v){
   maxLv=v; $('c50').setAttribute('aria-pressed',v===50); $('c51').setAttribute('aria-pressed',v===51);
-  render();
+  render(); renderList();
 }
 
 /* ===== 検算 ===== */
