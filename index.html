@@ -459,14 +459,33 @@ function scan(cl,W,H,tol){
   }
   const ivs=[],raw=[];
   for(const b of b3){
-    const [y,rs]=b[Math.floor(b.length/2)];
-    let tot=0;
-    for(const [s,e] of rs){
-      let n=0;
-      for(let x=s;x<=e;x++) if(cl[y*W+x]===1) n++;
-      tot+=n/(e-s+1)*5;
-    }
-    raw.push(tot); ivs.push(Math.max(0,Math.min(15,Math.round(tot))));
+    // 1行だけで測ると、その行でたまたま灰色を拾えなかったときに満タンに見えてしまう。
+    // 帯全体から区間の幅を決め、幅が揃っている行だけを使い、その中央値を採る。
+    const wid=[0,1,2].map(i=>{
+      const ws=b.map(r=>r[1][i][1]-r[1][i][0]+1).sort((x,y)=>x-y);
+      return ws[Math.floor(ws.length/2)];
+    });
+    const rows=b.filter(r=>[0,1,2].every(i=>{
+      const w=r[1][i][1]-r[1][i][0]+1;
+      return Math.abs(w-wid[i])<=Math.max(2,wid[i]*0.12);
+    }));
+    const use=rows.length?rows:b;
+    // 3区間は本来どれも同じ幅。灰色を拾い損ねて短く出た区間は、
+    // 一番広い区間の幅に合わせて測り直す（そうしないと満タンに見える）
+    const vals=use.map(r=>{
+      const y=r[0];
+      const wmax=Math.max(...r[1].map(([s,e])=>e-s+1));
+      let tot=0;
+      for(const [s,e] of r[1]){
+        const ee=Math.min(W-1, Math.max(e, s+wmax-1));
+        let n=0;
+        for(let x=s;x<=ee;x++) if(cl[y*W+x]===1) n++;
+        tot+=n/(ee-s+1)*5;
+      }
+      return tot;
+    }).sort((x,y)=>x-y);
+    const v=vals[Math.floor(vals.length/2)];
+    raw.push(v); ivs.push(Math.max(0,Math.min(15,Math.round(v))));
   }
   return {ivs,raw};
 }
