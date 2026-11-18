@@ -272,6 +272,8 @@ ja:{
  unsure:(iv,n)=>`個体値 ${iv}。名前を「${n}」と読みましたが自信がないので、下の欄で選んでください。`,
  done:(iv,n)=>`個体値 ${iv} / ${n} と判定しました。`,
  verified:(iv,n)=>`個体値 ${iv} / ${n}。CPとHPで検算済みです。`,
+ hpOnly:(iv,n)=>`個体値 ${iv} / ${n}。HPと照合しました（CPは読み取れませんでした）。`,
+ ambig:iv=>`個体値 ${iv}。候補が複数あります。スクショのCPと同じものを選んでください。`,
  fixed:(iv,n,old)=>`個体値 ${iv} / ${n}。バーは ${old} と読めましたが、CPとHPと合わないため補正しました。`,
  pickForm:iv=>`個体値 ${iv}。姿を選んでください。`,
  shadow:' シャドウのようです。',
@@ -313,6 +315,8 @@ en:{
  unsure:(iv,n)=>`IVs ${iv}. Read the name as "${n}" but that is not reliable, so pick it below.`,
  done:(iv,n)=>`IVs ${iv} / identified as ${n}.`,
  verified:(iv,n)=>`IVs ${iv} / ${n}. Cross-checked against CP and HP.`,
+ hpOnly:(iv,n)=>`IVs ${iv} / ${n}. Matched against HP (the CP could not be read).`,
+ ambig:iv=>`IVs ${iv}. More than one Pokémon fits. Pick the one whose CP matches your screenshot.`,
  fixed:(iv,n,old)=>`IVs ${iv} / ${n}. The bars read ${old}, which does not fit the CP and HP, so it was corrected.`,
  pickForm:iv=>`IVs ${iv}. Pick the right form.`,
  shadow:' Looks like a Shadow Pokémon.',
@@ -339,7 +343,7 @@ function deviceLang(){
 let LANG=deviceLang();
 const t=()=>T[LANG];
 function dispName(p){ return LANG==='ja'?p[0]:p[5]; }
-let MATCH=[];
+let MATCH=[], NAMECHARS='';
 function buildMatch(){
   MATCH=POKE.map(p=>{
     const n=dispName(p);
@@ -347,6 +351,7 @@ function buildMatch(){
     const b=n.replace(LANG==='ja'?/（.*?）/g:/\s*\(.*?\)/g,'').trim();
     return m?[b,(LANG==='ja'?m[1]+b:m[1]+' '+b)]:[b];
   });
+  NAMECHARS=[...new Set(MATCH.flat().join(''))].join('');
 }
 function applyLang(){
   buildMatch();
@@ -538,6 +543,14 @@ async function analyzeOne(file){
   try{
     await w.setParameters({tessedit_pageseg_mode:'7',tessedit_char_whitelist:''});
     out.nm=(await w.recognize(pack.name)).data.text.replace(/[\s\u3000]/g,'');
+    // 1回目で名前リストにぴったり合わなければ、単語モードでもう一度読む。
+    // 単語モードは縁の線を「ー」と読みがちなので、前後の「ー」は落としてから比べる
+    if(matchName(out.nm).d>0){
+      await w.setParameters({tessedit_pageseg_mode:'8',tessedit_char_whitelist:NAMECHARS});
+      const t2=(await w.recognize(pack.name)).data.text.replace(/[\s\u3000]/g,'').replace(/^[ー\-]+|[ー\-]+$/g,'');
+      if(t2 && matchName(t2).d<matchName(out.nm).d) out.nm=t2;
+      await w.setParameters({tessedit_pageseg_mode:'7',tessedit_char_whitelist:''});
+    }
     if(pack.hp){
       await w.setParameters({tessedit_char_whitelist:'0123456789/'});
       const t=(await w.recognize(pack.hp)).data.text.replace(/[^0-9/]/g,'');
@@ -557,11 +570,18 @@ async function analyzeOne(file){
   out.idx=mt.idx;
   // 名前の候補が複数あっても、CPとHPが合う種族はふつう1つに絞れる
   const fix=resolveState(mt.idx, raw, hpD, cpD);
+  if(fix&&fix.ambig){
+    // 名前もCPも決め手にならなかった。予想CPを添えて本人に選んでもらう
+    out.ambig=fix.ambig.map(x=>({idx:x.idx,ivs:x.ivs,cp:x.cp,hp:x.hp}));
+    out.idx=out.ambig.map(x=>x.idx);
+    return out;
+  }
   if(fix){
     out.idx=[fix.idx];
     out.corrected = fix.ivs.join('-')!==barIVs.join('-');
     out.ivs=fix.ivs; out.sum=fix.ivs[0]+fix.ivs[1]+fix.ivs[2];
-    out.cp=fix.cp; out.hp=fix.hp; out.level=fix.L; out.verified=true;
+    out.cp=fix.cp; out.hp=fix.hp; out.level=fix.L;
+    out.verified=!!fix.cpHit; out.hpOnly=!fix.cpHit;
     if(fix.cpLo!==undefined){ out.cpLo=fix.cpLo; out.cpHi=fix.cpHi; out.cp=null; }
   }else{
     // 検算できなかった場合は、名前だけで絞ってHPで補助
@@ -615,6 +635,12 @@ function showSingle(r){
   if(!r.nm && !r.idx){ m.className='msg ok'; m.textContent=t().noOcr(r.ivs.join('-'))+tail; openManual(); return; }
   if(r.unsure){ m.className='msg ng'; m.textContent=t().unsure(r.ivs.join('-'),r.nm)+tail; openManual(); return; }
   if(!r.idx){ m.className='msg ok'; m.textContent=t().noName(r.ivs.join('-'))+tail; openManual(); return; }
+  if(r.ambig){
+    m.className='msg ok'; m.textContent=t().ambig(r.ivs.join('-'))+tail;
+    $('pick').innerHTML=r.ambig.map(x=>
+      `<button data-i="${x.idx}" data-iv="${x.ivs.join('-')}" data-cp="${x.cp}" data-hp="${x.hp}">${dispName(POKE[x.idx])}　CP${x.cp}</button>`).join('');
+    return;
+  }
   if(r.hp) $('vhp').value=r.hp;
   if(r.cp) $('vcp').value=r.cp;
   if(r.idx.length===1){
@@ -622,7 +648,7 @@ function showSingle(r){
     const nm=dispName(POKE[r.idx[0]]), s=r.ivs.join('-');
     m.className='msg ok';
     m.textContent=(r.corrected ? t().fixed(s,nm,r.raw.map(v=>Math.round(v)).join('-'))
-                  : r.verified ? t().verified(s,nm) : t().done(s,nm))+tail;
+                  : r.verified ? t().verified(s,nm) : r.hpOnly ? t().hpOnly(s,nm) : t().done(s,nm))+tail;
   }else{
     m.className='msg ok'; m.textContent=t().pickForm(r.ivs.join('-'))+tail;
     $('pick').innerHTML=r.idx.slice(0,8).map(i=>`<button data-i="${i}">${dispName(POKE[i])}</button>`).join('');
@@ -658,7 +684,8 @@ function renderList(){
   arr.forEach((o,n)=>{
     const r=o.r;
     if(r.err){ html+=`<button class="row"><div class="no">–</div><div class="nm2">${L.rowFail}</div></button>`; return; }
-    const nm=(r.idx&&r.idx.length===1)?dispName(POKE[r.idx[0]]):(r.nm||'?');
+    const nm=r.ambig ? r.ambig.map(x=>dispName(POKE[x.idx])).join(' / ')+' ？'
+            : (r.idx&&r.idx.length===1)?dispName(POKE[r.idx[0]]):(r.nm||'?');
     const gl=rankOf(r,1500), ul=rankOf(r,2500), ml=rankOf(r,0);
     const fmt=v=>v==null?'–':L.rankBig(v)+L.rankSuf;
     html+=`<button class="row" data-i="${o.i}" aria-pressed="${o.i===selIdxRow}">
@@ -682,6 +709,7 @@ function selectRow(i){
   const r=RESULTS[i];
   if(!r||r.err) return;
   selIdxRow=i;
+  if(r.ambig){ setIVs(r.ivs); showSingle(r); renderList(); return; }
   setIVs(r.ivs);
   $('vhp').value=r.hp||''; $('vcp').value=r.cp||'';
   if(r.idx&&r.idx.length===1) selectPoke(r.idx[0]);
@@ -872,6 +900,7 @@ function resolveState(idxList, raw, hpD, cpD){
   const lo=raw.map(v=>Math.max(0,Math.round(v)-2));
   const hi=raw.map(v=>Math.min(15,Math.round(v)+2));
   let best=null, ties=[];
+  const bySp=new Map();   // 種族ごとの最良の状態
   for(const idx of idxList){
     const p=POKE[idx], BA=p[2], BD=p[3], BS=p[4];
     for(let a=lo[0];a<=hi[0];a++)
@@ -884,16 +913,30 @@ function resolveState(idxList, raw, hpD, cpD){
         const m=CPM[L];
         const hp=Math.floor((BS+s)*m);
         const cp=Math.max(10,Math.floor(rt*m*m));
-        const w=numMatch(hp,hpD)+numMatch(cp,cpD);
+        const cpHit=numMatch(cp,cpD);
+        const w=numMatch(hp,hpD)+cpHit;
         if(w<2) continue;                      // 少なくとも片方が確かに合うこと
         const sc=-w*10+ivd;
+        const prev=bySp.get(idx);
+        if(!prev||sc<prev.sc-1e-9) bySp.set(idx,{sc,idx,ivs:[a,d,s],cp,hp,L,cpHit});
         if(!best||sc<best.sc-1e-9){ best={sc,idx,ivs:[a,d,s],cp,hp,L,w}; ties=[best]; }
         else if(Math.abs(sc-best.sc)<1e-9) ties.push({sc,idx,ivs:[a,d,s],cp,hp,L,w});
       }
     }
   }
-  // 同点が残る場合（CPが読めずHPだけで絞れた等）はCPの中央値を採る
-  if(best && ties.length>1){
+  if(!best) return null;
+  best.cpHit=numMatch(best.cp,cpD);
+  // 別の種族でも同じくらい辻褄が合うなら、ここで決めつけない。
+  // CPが合っていない（HPだけで照合した）ときは、個体値のずれ1以内まで候補に含める。
+  const margin=best.cpHit?1e-9:1.0;
+  const rivals=[...bySp.values()].filter(x=>x.sc<=best.sc+margin).sort((x,y)=>x.sc-y.sc);
+  if(rivals.length>1 && cpD && cpD.length>=2){
+    const f=rivals.filter(x=>{const s=String(x.cp); return s.includes(cpD)||cpD.includes(s);});
+    if(f.length===1) return Object.assign(f[0],{cpHit:1});
+  }
+  if(rivals.length>1) return {ambig:rivals};
+  // 同点が残る場合（CPが読めずHPだけで絞れた等）はCPの幅を示す
+  if(ties.length>1){
     const same=ties.filter(x=>x.idx===best.idx && x.ivs.join()===best.ivs.join());
     const cps=[...new Set(same.map(x=>x.cp))].sort((x,y)=>x-y);
     if(cps.length>1){
@@ -948,7 +991,20 @@ $('hits').addEventListener('click',e=>{
 });
 $('pick').addEventListener('click',e=>{
   const d=e.target.closest('button[data-i]'); if(!d) return;
-  $('pick').innerHTML=''; selectPoke(+d.dataset.i);
+  $('pick').innerHTML='';
+  if(d.dataset.iv){
+    setIVs(d.dataset.iv.split('-').map(Number));
+    $('vcp').value=d.dataset.cp||''; $('vhp').value=d.dataset.hp||'';
+    // 一覧から来た場合は、その行の結果も確定させる
+    const r=RESULTS[selIdxRow];
+    if(r&&r.ambig){
+      const x=r.ambig.find(z=>String(z.idx)===d.dataset.i);
+      Object.assign(r,{idx:[x.idx],ivs:x.ivs,cp:x.cp,hp:x.hp,sum:x.ivs[0]+x.ivs[1]+x.ivs[2],ambig:null});
+      renderList();
+    }
+    $('msg').className='msg ok'; $('msg').textContent='';
+  }
+  selectPoke(+d.dataset.i);
 });
 document.addEventListener('click',e=>{ if(!e.target.closest('.search')) $('hits').hidden=true; });
 
